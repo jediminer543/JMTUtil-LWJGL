@@ -1,0 +1,33 @@
+# Build Directories #
+#####################
+# Directories with built content - not needed
+/bin
+/build
+
+# Gradle #
+##########
+# Ignores all gradle files
+/.gradle
+
+# Git Stuff #
+#############
+# Removes strange git stuff such as temporary markdown previews.
+/.README.md.html
+
+# Eclipse #
+###########
+# Project configuration should be handled by gradle
+# Leaving .project so eclipse can detect gradle config
+# USE plugin: 
+.classpath
+/.settings
+
+# Idea #
+########
+# Idea project config
+# Idea users should target the project as a gradle project
+*.iml
+/.idea
+
+
+

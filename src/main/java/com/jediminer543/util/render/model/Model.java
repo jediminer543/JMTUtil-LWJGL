@@ -3,8 +3,8 @@ package com.jediminer543.util.render.model;
 import com.jediminer543.util.render.Renderable;
 import com.jediminer543.util.render.Texture;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import com.jediminer543.util.vector.Vector2f;
+import com.jediminer543.util.vector.Vector3f;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,6 @@ public class Model extends Renderable
 		{
 			try {
 				material.texture = new Texture(path.getParent() + "\\" + material.textureName);
-				material.slickTexture = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG", org.newdawn.slick.util.ResourceLoader.getResourceAsStream(path.getParent() + "\\" + material.textureName));
 			}
 			catch (IOException e)
 			{

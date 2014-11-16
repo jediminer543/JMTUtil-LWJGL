@@ -1,9 +1,8 @@
 package com.jediminer543.util.render.camera;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.system.glfw.GLFW;
+import com.jediminer543.util.vector.Vector3f;
 
 /**
  * Created by Jediminer543 on 23/08/2014.

@@ -10,7 +10,6 @@ public class MTLMaterial
 	public String name;
 	public String textureName;
 	public Texture texture;
-	public org.newdawn.slick.opengl.Texture slickTexture;
 
 	//TODO Learn MTL CODE and how to use materials in LWJGL
 	public MTLMaterial(String name)

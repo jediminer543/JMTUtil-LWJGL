@@ -1,6 +1,6 @@
 package com.jediminer543.util.render;
 
-import org.lwjgl.util.vector.Vector3f;
+import com.jediminer543.util.vector.Vector3f;
 
 /**
  * Created by Jediminer543 on 12/08/2014.

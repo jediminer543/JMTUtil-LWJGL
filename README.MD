@@ -6,7 +6,7 @@ JMTUtil-LWJGL
 JMTUtil is a light game engine built on either LWJGL 2 or 3 depending on stuffs.
 
 ##Features
-[ ] Devise Features
+- [ ] Devise Features
 
 ##Notable Issues
 - Non functional

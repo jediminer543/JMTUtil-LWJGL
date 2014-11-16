@@ -1,9 +1,12 @@
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.glfw.*;
- 
+
 import java.nio.ByteBuffer;
  
+
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.glfw.GLFW.*;
@@ -66,11 +69,13 @@ public class HelloWorld {
         GLContext.createFromCurrent();
  
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
             glfwSwapBuffers(window);
             glfwPollEvents();
+            
         }
     }
  

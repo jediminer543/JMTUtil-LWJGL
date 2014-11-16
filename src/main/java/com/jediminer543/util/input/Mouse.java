@@ -1,7 +1,5 @@
 package com.jediminer543.util.input;
 
-import org.lwjgl.system.glfw.GLFW;
-
 public class Mouse {
 	
 	/**
@@ -26,13 +24,16 @@ public class Mouse {
 	}
 	
 	/** Delta X */
-	private static int				dx;
+	private int				dx;
 
 	/** Delta Y */
-	private static int				dy;
+	private int				dy;
 
-	/** Delta Z */
-	private static int				dwheel;
+	/** Delta Scroll x */
+	private int				dwheelx;
+	
+	/** Delta Scroll y */
+	private int				dwheely;
 	
 	/**
 	 * Polls the mouse for its current state. Access the polled values using the
@@ -45,7 +46,7 @@ public class Mouse {
 	 * @see org.lwjgl.input.Mouse#getDWheel()
 	 */
 	public void Poll() {
-		//GLFW.glfwGetCursorPos(getWindowID(), xpos, ypos);
+		
 	}
 	
 	/**
@@ -67,11 +68,20 @@ public class Mouse {
 	}
 
 	/**
-	 * @return Movement of the wheel since last time getDWheel() was called
+	 * @return Movement of the wheel on x axis since last time getDWheelX() was called
 	 */
-	public int getDWheel() {
-			int result = dwheel;
-			dwheel = 0;
+	public int getDWheelX() {
+			int result = dwheelx;
+			dwheelx = 0;
+			return result;
+	}
+	
+	/**
+	 * @return Movement of the wheel on y axis since last time getDWheelY() was called
+	 */
+	public int getDWheelY() {
+			int result = dwheely;
+			dwheely = 0;
 			return result;
 	}
 	

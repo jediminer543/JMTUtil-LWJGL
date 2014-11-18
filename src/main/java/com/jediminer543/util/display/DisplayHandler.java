@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.glfw.GLFW;
-
 import com.jediminer543.util.input.Keyboard;
 
 public class DisplayHandler {
@@ -17,7 +16,6 @@ public class DisplayHandler {
 	private static boolean initialised = false;
 	
 	public static void init() {
-		//GLFW.glfwSetErrorCallback(Util.getDefault());
 		
 		if ( GLFW.glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -41,7 +39,7 @@ public class DisplayHandler {
 	
 	public static void setActive(long windowID) {
 		activeDisplayPos = windowID;
-		//GLFW.glfwMakeContextCurrent(activeDisplayPos);
+		GLFW.glfwMakeContextCurrent(activeDisplayPos);
 	}
 	
 	
@@ -49,17 +47,6 @@ public class DisplayHandler {
 	public static Keyboard getDisplayKeyboard(long windowID) {
 		
 		return null;
-	}
-
-	public static abstract class DisplaySettings {
-		
-		public int width;
-		public int height;
-		
-		public String title;
-		
-		public long monitor, share = -1L;
-		
 	}
 
 }

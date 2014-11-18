@@ -13,9 +13,9 @@ import static org.lwjgl.system.glfw.GLFW.*;
  
 public class HelloWorld {
  
-    private long window;
+    private static long window;
  
-    public void execute() {
+    public static void execute() {
         System.out.println("Hello LWJGL " + Sys.getVersion() + "!");
  
         try {
@@ -27,7 +27,7 @@ public class HelloWorld {
         }
     }
  
-    private void init() {
+    private static void init() {
         glfwSetErrorCallback(ErrorCallback.Util.getDefault());
  
         if ( glfwInit() != GL11.GL_TRUE )
@@ -65,7 +65,7 @@ public class HelloWorld {
         glfwShowWindow(window);
     }
  
-    private void loop() {
+    private static void loop() {
         GLContext.createFromCurrent();
  
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
@@ -80,6 +80,6 @@ public class HelloWorld {
     }
  
     public static void main(String[] args) {
-        new HelloWorld().execute();
+        execute();
     }
 }

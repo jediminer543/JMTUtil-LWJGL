@@ -1,8 +1,23 @@
 package com.jediminer543.util.display;
 
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.system.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.system.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.system.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.system.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.system.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.system.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.system.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.system.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.system.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.system.glfw.GLFW.glfwWindowHint;
+
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.system.glfw.GLFWvidmode;
 import org.lwjgl.system.glfw.WindowCallback;
 
 import com.jediminer543.util.handlers.time.Tickable;
@@ -56,8 +71,25 @@ public class Display implements Tickable
 	}
 	
 	public void init() {
+		glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+        
 		windowID = GLFW.glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
+		
 		WindowCallback.set(windowID, callback);
+		
+		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetWindowPos(
+            windowID,
+            (GLFWvidmode.width(vidmode) - width) / 2,
+            (GLFWvidmode.height(vidmode) - height) / 2
+        );
+        
+        glfwMakeContextCurrent(windowID);
+        
+		glfwSwapInterval(1);
+        glfwShowWindow(windowID);
 		keyboard = new Keyboard(windowID);
 	}
 

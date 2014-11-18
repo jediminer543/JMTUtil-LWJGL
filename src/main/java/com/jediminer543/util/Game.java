@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.gl.Project;
@@ -26,7 +27,7 @@ public class Game
 	{
 		model = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\sphere.obj"));
 		initDisplay();
-		mainLoop();
+		//mainLoop();
 	}
 	
 	public static void init() {
@@ -40,6 +41,7 @@ public class Game
 	}
 	
 	public static void initGl() {
+		GLContext.createFromCurrent();
 		Project.gluPerspective(90f, width/height, 0.01f, 100f);
 	}
 	

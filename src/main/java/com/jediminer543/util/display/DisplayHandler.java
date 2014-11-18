@@ -1,59 +1,64 @@
 package com.jediminer543.util.display;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.glfw.ErrorCallback;
 import org.lwjgl.system.glfw.GLFW;
 
 import com.jediminer543.util.input.Keyboard;
 
 public class DisplayHandler {
 	
-	@SuppressWarnings("unused")
-	private int activeDisplayPos = 0;
+	private static long activeDisplayPos = 0;
 	
-	private ArrayList<Display> displays = new ArrayList<Display>();
+	private static Map<Long, Display> displays = new HashMap<Long, Display>();
 	
-	private boolean initialised = false;
+	private static boolean initialised = false;
 	
-	public void init() {
-		GLFW.glfwSetErrorCallback(ErrorCallback.Util.getDefault());
+	public static void init() {
+		//GLFW.glfwSetErrorCallback(Util.getDefault());
 		
 		if ( GLFW.glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
 		
 		initialised = true;
-		
-		for (Display display:displays) {
-			display.init();
-		}
 	}
 	
-	public long makeDisplay(DisplaySettings displaySettings) {
-		int pos = displays.size();
-		displays.add(pos, new Display(displaySettings.title, displaySettings.width, displaySettings.height, displaySettings.monitor, displaySettings.share));
-		if (initialised) {
-			displays.get(pos).init();
+	public static long makeDisplay(String title, int width, int height, long monitor, long share) {
+		if (!initialised) {
+			throw new IllegalArgumentException("Display handler not initialised");
 		}
-		return displays.get(pos).getWindowID();
+		Display display = new Display(title, width, height, monitor, share);
+		if (display.getWindowID() > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Max display cap reached");
+		}
+		display.init();
+		long pos = display.getWindowID();
+		displays.put(pos, display);
+		return pos;
 	}
 	
-	public Keyboard getDisplayKeyboard(long windowID) {
+	public static void setActive(long windowID) {
+		activeDisplayPos = windowID;
+		//GLFW.glfwMakeContextCurrent(activeDisplayPos);
+	}
+	
+	
+	
+	public static Keyboard getDisplayKeyboard(long windowID) {
 		
 		return null;
 	}
 
-	
-	public abstract class DisplaySettings {
+	public static abstract class DisplaySettings {
 		
 		public int width;
 		public int height;
 		
 		public String title;
 		
-		@SuppressWarnings("null")
-		public long monitor, share = (Long) null;
+		public long monitor, share = -1L;
 		
 	}
 

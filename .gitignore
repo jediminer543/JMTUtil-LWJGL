@@ -29,5 +29,10 @@
 *.iml
 /.idea
 
+# Java #
+########
+# Error files
+hs_err_pid*.log
+
 
 

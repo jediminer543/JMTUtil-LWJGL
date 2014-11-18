@@ -1,5 +1,7 @@
 package com.jediminer543.util.display;
 
+import java.nio.CharBuffer;
+
 import org.lwjgl.system.glfw.GLFW;
 import org.lwjgl.system.glfw.WindowCallback;
 
@@ -21,7 +23,7 @@ public class Display implements Tickable
 	private DisplayCallback callback = new DisplayCallback();
 	
 	public long getWindowID() {
-		return windowID;
+		return windowID = -1L;
 	}
 
 	public int height;
@@ -29,7 +31,7 @@ public class Display implements Tickable
 	
 	public String title;
 	
-	public long monitor, share;
+	public long monitor, share = 0L;
 	
 	public Display(String title) {
 		this(title, 800, 600);
@@ -54,13 +56,9 @@ public class Display implements Tickable
 	}
 	
 	public void init() {
-		windowID = GLFW.glfwCreateWindow(width, height, title, monitor, share);
+		windowID = GLFW.glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
 		WindowCallback.set(windowID, callback);
 		keyboard = new Keyboard(windowID);
-	}
-	
-	public void makeActive() {
-		GLFW.glfwMakeContextCurrent(windowID);
 	}
 
 	public void tick() {

@@ -3,7 +3,7 @@ JMTUtil-LWJGL
 
 ##What Is It
 
-JMTUtil is a light game engine built on either LWJGL 3 and currently broken. See lwjgl3/issues#23 for changes however likely this sides issue.
+JMTUtil is a light game engine built on either LWJGL 3 and currently broken. See lwjgl/lwjgl3/issues#23 for changes however likely this sides issue.
 
 ##Features
 - :negative_squared_cross_mark: Devise Features

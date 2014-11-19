@@ -42,7 +42,9 @@ public class DisplayHandler {
 		GLFW.glfwMakeContextCurrent(activeDisplayPos);
 	}
 	
-	
+	public static long getActive() {
+		return activeDisplayPos;
+	}
 	
 	public static Keyboard getDisplayKeyboard(long windowID) {
 		

@@ -38,7 +38,7 @@ public class Display implements Tickable
 	private DisplayCallback callback = new DisplayCallback();
 	
 	public long getWindowID() {
-		return windowID = -1L;
+		return windowID;
 	}
 
 	public int height;

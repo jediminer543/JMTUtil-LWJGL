@@ -2,17 +2,7 @@ package com.jediminer543.util.display;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.system.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.system.glfw.GLFW.GLFW_VISIBLE;
-import static org.lwjgl.system.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.system.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.system.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.system.glfw.GLFW.glfwMakeContextCurrent;
-import static org.lwjgl.system.glfw.GLFW.glfwSetWindowPos;
-import static org.lwjgl.system.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.system.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.system.glfw.GLFW.glfwWindowHint;
-
+import static org.lwjgl.system.glfw.GLFW.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
@@ -20,17 +10,18 @@ import org.lwjgl.system.glfw.GLFW;
 import org.lwjgl.system.glfw.GLFWvidmode;
 import org.lwjgl.system.glfw.WindowCallback;
 
+import com.jediminer543.util.event.InputEvent;
+import com.jediminer543.util.event.KeyEvent;
+import com.jediminer543.util.event.MouseMoveEvent;
+import com.jediminer543.util.event.annotation.Input;
+import com.jediminer543.util.event.bus.InputBus;
 import com.jediminer543.util.handlers.time.Tickable;
-import com.jediminer543.util.input.InputStore;
 import com.jediminer543.util.input.Keyboard;
 import com.jediminer543.util.input.Mouse;
-import com.jediminer543.util.input.MouseEvent;
 
 public class Display implements Tickable
 {
 	private long windowID;
-	
-	private InputStore is = new InputStore();
 	
 	private Keyboard keyboard;
 	private Mouse mouse;
@@ -47,6 +38,16 @@ public class Display implements Tickable
 	public String title;
 	
 	public long monitor, share = 0L;
+	
+	@Input
+	public void onInput(InputEvent ie) {
+		if (ie instanceof KeyEvent) {
+			KeyEvent ke = (KeyEvent) ie;
+			if (ke.getWindowID() == this.getWindowID() && ke.getKey() == Keyboard.KEY_ESCAPE) {
+				glfwSetWindowShouldClose(windowID, GL_TRUE);
+			}
+		}
+	}
 	
 	public Display(String title) {
 		this(title, 800, 600);
@@ -68,6 +69,7 @@ public class Display implements Tickable
 		this.height = height;
 		this.monitor = monitor;
 		this.share = share;
+		InputBus.register(this);
 	}
 	
 	public void init() {
@@ -75,7 +77,7 @@ public class Display implements Tickable
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         
-		windowID = GLFW.glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
+		windowID = glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
 		
 		WindowCallback.set(windowID, callback);
 		
@@ -94,23 +96,10 @@ public class Display implements Tickable
 	}
 
 	public void tick() {
-		this.callback.newME = true;
-		this.keyboard.Poll();
-		this.mouse.Poll();
+		//TODO
 	}
 	
 	public class DisplayCallback extends WindowCallback {
-
-		public MouseEvent me = new MouseEvent();
-		
-		public boolean newME = false;
-		
-		public void mouseEventUpdate() {
-			if (this.newME) {
-				is.mouseEvents.add(me);
-				this.newME = false;
-			}
-		}
 		
 		@Override
 		public void charMods(long arg0, int arg1, int arg2) {
@@ -132,7 +121,7 @@ public class Display implements Tickable
 
 		@Override
 		public void cursorPos(long window, double xpos, double ypos) {
-			mouseEventUpdate();
+			InputBus.invoke(new MouseMoveEvent(window, xpos, ypos));
 			
 		}
 
@@ -150,20 +139,19 @@ public class Display implements Tickable
 
 		@Override
 		public void key(long window, int key, int scancode, int action, int mods) {
-			// TODO Auto-generated method stub
+			InputBus.invoke(new KeyEvent(window, key, scancode, action, mods));
 			
 		}
 
 		@Override
 		public void mouseButton(long window, int button, int action, int mods) {
-			mouseEventUpdate();
+			//TODO:mouseEventUpdate();
 			
 		}
 
 		@Override
 		public void scroll(long window, double wheelx, double wheely) {
-			mouseEventUpdate();
-			
+			//TODO:mouseEventUpdate();
 		}
 
 		@Override

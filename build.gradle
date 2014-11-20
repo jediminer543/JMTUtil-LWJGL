@@ -16,8 +16,8 @@ apply plugin:'application'
 mainClassName = "RunMain"
 applicationDefaultJvmArgs = ["-Djava.library.path=lib/natives"]
 
-sourceCompatibility = 1.5
-version = '0.0.1'
+sourceCompatibility = 1.7
+version = '0.1.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'JMTUtil', 'Implementation-Version': version

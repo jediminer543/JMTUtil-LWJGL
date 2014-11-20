@@ -133,13 +133,13 @@ public class DebugCamera extends Camera
 
 	public void convertLook()
 	{
-		float Hypotonuse = lookVelocity.z; //TODO add delta
+		float Hypotonuse = lookVelocity.x; //TODO add delta
 		float Ajacent = Hypotonuse * (float) Math.cos(Math.toRadians(rot.x));
 		float Oposite = Hypotonuse * (float) Math.sin(Math.toRadians(rot.x)); 
 		pos.z += Ajacent; 
 		pos.x -= Oposite;
 
-		float HypotonuseP = lookVelocity.x; //TODO add delta
+		float HypotonuseP = lookVelocity.z; //TODO add delta
 		float AjacentP = HypotonuseP * (float) Math.cos(Math.toRadians(rot.x - 90));
 		float OpositeP = HypotonuseP * (float) Math.sin(Math.toRadians(rot.x - 90)); 
 		pos.z += AjacentP;

@@ -58,6 +58,7 @@ public class Model extends Renderable
 		GL11.glRotatef(rot.z, 0, 0, 1);
 		GL11.glBegin(GL11.GL_TRIANGLES);
 		for (Face f:faces) {
+			if (hasTextures) {
 			if (currentMaterial == null) {
 				for (MTLMaterial material : mtl.materials) {
 					if (material.name.equals(f.materialName)) {
@@ -78,8 +79,8 @@ public class Model extends Renderable
 					}
 				}
 			}
+			}
 			f.render();
-
 		}
 		GL11.glEnd();
 		GL11.glPopMatrix();

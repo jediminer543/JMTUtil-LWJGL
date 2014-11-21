@@ -42,11 +42,13 @@ public class DebugCamera extends Camera
 
 	public void moveCamera()
 	{
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glRotatef(0, 1, 1, 1);
 		GL11.glLoadIdentity();
 		GL11.glRotatef(rot.x, 0, 1, 0);
 		GL11.glRotatef(rot.y, 1, 0, 0);
 		GL11.glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-//		GL11.glRotatef(rot.z, 0, 0, 0);
+		//GL11.glRotatef(rot.z, 0, 0, 0);
 	}
 
 	@Input
@@ -59,44 +61,43 @@ public class DebugCamera extends Camera
 					lookVelocity.x += (float) (10 * 0.01);
 					break;
 				case Keyboard.KEY_S:
-					lookVelocity.x += (float) (-10 * 0.01);
+					lookVelocity.x -= (float) (10 * 0.01);
 					break;
 				case Keyboard.KEY_A:
-					lookVelocity.z += (float) (-10 * 0.01);
-					break;
-				case Keyboard.KEY_D:
 					lookVelocity.z += (float) (10 * 0.01);
 					break;
-				case Keyboard.KEY_UP:
-					rot.y += 1;
+				case Keyboard.KEY_D:
+					lookVelocity.z -= (float) (10 * 0.01);
 					break;
-				case Keyboard.KEY_DOWN:
+				case Keyboard.KEY_UP:
 					rot.y -= 1;
 					break;
-				case Keyboard.KEY_LEFT:
-					rot.x += 1;
+				case Keyboard.KEY_DOWN:
+					rot.y += 1;
 					break;
-				case Keyboard.KEY_RIGHT:
+				case Keyboard.KEY_LEFT:
 					rot.x -= 1;
 					break;
+				case Keyboard.KEY_RIGHT:
+					rot.x += 1;
+					break;
 				case Keyboard.KEY_SPACE:
-					pos.y += 0.1;
+					pos.y -= 0.1;
 					break;
 				case Keyboard.KEY_LCONTROL:
-					pos.y -= 0.1;
+					pos.y += 0.1;
 					break;
 				}
 			}
 		}
-		/*
 		else if (ie instanceof MouseEvent) {
 			if (ie instanceof MouseMoveEvent) {
 				MouseMoveEvent mme = (MouseMoveEvent) ie;
-				DX += mme.getXpos() * 0.015;
-				DY += mme.getYpos() * 0.01;
+				DX += mme.getXpos() * 0.15;
+				DY -= mme.getYpos() * 0.1;
 			}
 		}
-		*/
+		
 	}
 	/*
 	public void detectInput()

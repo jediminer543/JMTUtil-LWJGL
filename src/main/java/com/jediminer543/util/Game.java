@@ -21,7 +21,7 @@ public class Game
 {
 	public static long mainDisplayID;
 	
-	public static Model model;
+	public static Model model, sphere;
 	
 	public static int width = 800;
 	public static int height = 600;
@@ -32,6 +32,7 @@ public class Game
 	public static void main(String[] args) throws IOException
 	{
 		model = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\cube.obj"));
+		sphere = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\sphere2.obj"));
 		init();
 		mainLoop();
 	}
@@ -40,6 +41,7 @@ public class Game
 		initDisplay();
 		initGl();
 		model.init();
+		sphere.init();
 	}
 	
 	public static void initDisplay() {
@@ -52,7 +54,7 @@ public class Game
 		GLContext.createFromCurrent();
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        Project.gluPerspective(90, width / height, 0.01f, 100f);
+        Project.gluPerspective(70, width / height, 0.01f, 100f);
         //glGetFloat(GL_PROJECTION_MATRIX, GLOBALS.GLUMatrix);
         //glMatrixMode(GL_PROJECTION);
         //glLoadIdentity();
@@ -74,10 +76,12 @@ public class Game
 		DebugCamera camera = new DebugCamera();
 		GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 		model.pos.translate(new Vector3f(-1f,0f,-1f));
+		model.rot.translate(new Vector3f(-45f,0f,-45f));
 		GLFW.glfwSetInputMode(mainDisplayID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		while (GLFW.glfwWindowShouldClose(DisplayHandler.getActive()) == GL11.GL_FALSE) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			model.render();
+			sphere.render();
 			camera.tick();
 			GLFW.glfwSwapBuffers(DisplayHandler.getActive());
 			GLFW.glfwPollEvents();

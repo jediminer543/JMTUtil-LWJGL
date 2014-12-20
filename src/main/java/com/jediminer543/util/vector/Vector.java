@@ -40,6 +40,7 @@ import java.io.Serializable;
  *	A reconstruction of LWJGL-Util Vector code
  *	Cloned from original then modified
  */
+@Deprecated
 public abstract class Vector implements Serializable
 {
 	private static final long serialVersionUID = 1L;

@@ -1,6 +1,6 @@
 package com.jediminer543.util.render;
 
-import com.jediminer543.util.vector.Vector3f;
+import javax.vecmath.Vector3f;
 
 /**
  * Created by Jediminer543 on 12/08/2014.

@@ -10,7 +10,8 @@ import com.jediminer543.util.event.MouseMoveEvent;
 import com.jediminer543.util.event.annotation.Input;
 import com.jediminer543.util.event.bus.InputBus;
 import com.jediminer543.util.input.Keyboard;
-import com.jediminer543.util.vector.Vector3f;
+import com.jediminer543.util.input.Mouse;
+import javax.vecmath.Vector3f;
 
 /**
  * Created by Jediminer543 on 23/08/2014.
@@ -20,6 +21,8 @@ import com.jediminer543.util.vector.Vector3f;
 public class DebugCamera extends Camera
 {
 	
+	Keyboard keyboard = new Keyboard(DisplayHandler.getActive());
+	Mouse mouse = new Mouse(DisplayHandler.getActive());
 	
 	Vector3f lookVelocity = new Vector3f();
 	
@@ -36,104 +39,107 @@ public class DebugCamera extends Camera
 		rot.y += -DY * 0.1;
 		DX = DY = 0;
 		convertLook();
-		//detectInput();
+		detectInput();
 		moveCamera();
 	}
 
 	public void moveCamera()
 	{
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glRotatef(0, 1, 1, 1);
+		//GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		//GL11.glRotatef(0, 1, 1, 1);
 		GL11.glLoadIdentity();
 		GL11.glRotatef(rot.x, 0, 1, 0);
 		GL11.glRotatef(rot.y, 1, 0, 0);
-		GL11.glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+		GL11.glTranslatef(pos.x, pos.y, pos.z);
 		//GL11.glRotatef(rot.z, 0, 0, 0);
 	}
 
 	@Input
 	public void detectInput(InputEvent ie) {
-		if (ie instanceof KeyEvent) {
-			KeyEvent ke = (KeyEvent) ie;
-			if (ke.getWindowID() == DisplayHandler.getActive()) {
-				switch (ke.getKey()) {
-				case Keyboard.KEY_W:
-					lookVelocity.x += (float) (10 * 0.01);
-					break;
-				case Keyboard.KEY_S:
-					lookVelocity.x -= (float) (10 * 0.01);
-					break;
-				case Keyboard.KEY_A:
-					lookVelocity.z += (float) (10 * 0.01);
-					break;
-				case Keyboard.KEY_D:
-					lookVelocity.z -= (float) (10 * 0.01);
-					break;
-				case Keyboard.KEY_UP:
-					rot.y -= 1;
-					break;
-				case Keyboard.KEY_DOWN:
-					rot.y += 1;
-					break;
-				case Keyboard.KEY_LEFT:
-					rot.x -= 1;
-					break;
-				case Keyboard.KEY_RIGHT:
-					rot.x += 1;
-					break;
-				case Keyboard.KEY_SPACE:
-					pos.y -= 0.1;
-					break;
-				case Keyboard.KEY_LCONTROL:
-					pos.y += 0.1;
-					break;
-				}
-			}
-		}
-		else if (ie instanceof MouseEvent) {
-			if (ie instanceof MouseMoveEvent) {
-				MouseMoveEvent mme = (MouseMoveEvent) ie;
-				DX += mme.getXpos() * 0.15;
-				DY -= mme.getYpos() * 0.1;
-			}
-		}
+//		if (ie instanceof KeyEvent) {
+//			KeyEvent ke = (KeyEvent) ie;
+//			if (ke.getWindowID() == DisplayHandler.getActive()) {
+//				switch (ke.getKey()) {
+//				case Keyboard.KEY_W:
+//					lookVelocity.x += (float) (10 * 0.01);
+//					break;
+//				case Keyboard.KEY_S:
+//					lookVelocity.x -= (float) (10 * 0.01);
+//					break;
+//				case Keyboard.KEY_A:
+//					lookVelocity.z += (float) (10 * 0.01);
+//					break;
+//				case Keyboard.KEY_D:
+//					lookVelocity.z -= (float) (10 * 0.01);
+//					break;
+//				case Keyboard.KEY_UP:
+//					rot.y -= 1;
+//					break;
+//				case Keyboard.KEY_DOWN:
+//					rot.y += 1;
+//					break;
+//				case Keyboard.KEY_LEFT:
+//					rot.x -= 1;
+//					break;
+//				case Keyboard.KEY_RIGHT:
+//					rot.x += 1;
+//					break;
+//				case Keyboard.KEY_SPACE:
+//					pos.y -= 0.1;
+//					break;
+//				case Keyboard.KEY_LCONTROL:
+//					pos.y += 0.1;
+//					break;
+//				}
+//			}
+//		}
+//		else 
+//		if (ie instanceof MouseEvent) {
+//			if (ie instanceof MouseMoveEvent) {
+//				MouseMoveEvent mme = (MouseMoveEvent) ie;
+//				DX += mme.getXpos() * 0.15;
+//				DY -= mme.getYpos() * 0.1;
+//			}
+//		}
 		
 	}
-	/*
+	
 	public void detectInput()
 	{
-		if (Mouse.isGrabbed()) {
-			int DX = Mouse.getDX();
-			int DY = Mouse.getDY();
-
+		//if (Mouse.isGrabbed()) {
+			int DX = mouse.getDX();
+			int DY = mouse.getDY();
+			
 			rot.x += DX * 0.15;
 			rot.y += -DY * 0.1;
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_F1)) {
-			Mouse.setGrabbed(!Mouse.isGrabbed());
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		//}
+		
+		if (keyboard.isKeyDown(Keyboard.KEY_W))
 			lookVelocity.x += (float) (10 * 0.01);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			lookVelocity.x += (float) (-10 * 0.01);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			lookVelocity.z += (float) (-10 * 0.01);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (keyboard.isKeyDown(Keyboard.KEY_S))
+			lookVelocity.x -= (float) (10 * 0.01);
+		if (keyboard.isKeyDown(Keyboard.KEY_A))
 			lookVelocity.z += (float) (10 * 0.01);
-		}
+		if (keyboard.isKeyDown(Keyboard.KEY_D))
+			lookVelocity.z -= (float) (10 * 0.01);
+		if (keyboard.isKeyDown(Keyboard.KEY_UP))
+			rot.y -= 1;
+		if (keyboard.isKeyDown(Keyboard.KEY_DOWN))
+			rot.y += 1;
+		if (keyboard.isKeyDown(Keyboard.KEY_LEFT))
+			rot.x -= 1;
+		if (keyboard.isKeyDown(Keyboard.KEY_RIGHT))
+			rot.x += 1;
+		if (keyboard.isKeyDown(Keyboard.KEY_SPACE))
+			pos.y -= 0.1;
+		if (keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+			pos.y += 0.1;
 	}
-	*/
+	
 
 	public void convertLook()
 	{
+		
 		float Hypotonuse = lookVelocity.x; //TODO add delta
 		float Ajacent = Hypotonuse * (float) Math.cos(Math.toRadians(rot.x));
 		float Oposite = Hypotonuse * (float) Math.sin(Math.toRadians(rot.x)); 

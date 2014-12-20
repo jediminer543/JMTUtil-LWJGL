@@ -1,6 +1,16 @@
 package com.jediminer543.util.input;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
 import org.lwjgl.system.glfw.GLFW;
+
+import com.jediminer543.util.event.InputEvent;
+import com.jediminer543.util.event.KeyEvent;
+import com.jediminer543.util.event.annotation.Input;
 
 /**
  * 
@@ -10,6 +20,19 @@ import org.lwjgl.system.glfw.GLFW;
  */
 public class Keyboard 
 {
+	@Input
+	public void onInput(InputEvent ie) {
+		if (ie.getWindowID() == this.windowID) {
+			if (ie instanceof KeyEvent) {
+				KeyEvent ke = (KeyEvent) ie;
+				Event event = new Event();
+				event.key = ke.getKey();
+				event.repeat = ke.getAction() == GLFW.GLFW_REPEAT;
+				event.state = ke.getAction() == GLFW.GLFW_PRESS || ke.getAction() == GLFW.GLFW_REPEAT;
+			}
+		}
+	}
+	
 	/**
 	 * Creates a keyboard with a predefined windowID
 	 * @param windowID Window to link to
@@ -26,8 +49,13 @@ public class Keyboard
 
 	public void setWindowID(long windowID) {
 		this.windowID = windowID;
-		this.Poll();
 	}
+	
+//TODO add keyboardMode
+//	public static enum KeyboardMode {
+//		DirectRead,
+//		EventRead;
+//	}
 	
 	/**
 	 * The special keycode meaning that only the
@@ -163,6 +191,41 @@ public class Keyboard
 	public static final int KEY_RWIN            = KEY_RMETA; /* Right Windows key */
 	public static final int KEY_SLEEP           = GLFW.GLFW_KEY_PAUSE;
 	
+	private static final String[] keyName = new String[256];
+	
+	private static final Map<String, Integer> keyMap = new HashMap<String, Integer>(253);
+	@SuppressWarnings("unused")
+	private static int counter;
+
+	static {
+		// Use reflection to find out key names
+		Field[] fields = Keyboard.class.getFields();
+		try {
+			for ( Field field : fields ) {
+				if ( Modifier.isStatic(field.getModifiers())
+				     && Modifier.isPublic(field.getModifiers())
+				     && Modifier.isFinal(field.getModifiers())
+				     && field.getType().equals(int.class)
+				     && field.getName().startsWith("KEY_")
+				     && !field.getName().endsWith("WIN") ) { /* Don't use deprecated names */
+
+					int key = field.getInt(null);
+					String name = field.getName().substring(4);
+					keyName[key] = name;
+					keyMap.put(name, key);
+					counter++;
+				}
+
+			}
+		} catch (Exception e) {
+		}
+	}
+	
+	public Stack<Event> events = new Stack<Event>();
+	
+	public Event current_event;
+
+	
 	/**
 	 * Checks to see if a key is down.
 	 * @param key Keycode to check
@@ -171,7 +234,7 @@ public class Keyboard
 	public boolean isKeyDown(int key) {
 		int state = GLFW.glfwGetKey(getWindowID(), key);
 		switch (state) {
-		case GLFW.GLFW_REPEAT:
+		//case GLFW.GLFW_REPEAT:
 		case GLFW.GLFW_PRESS:
 			return true;
 		default:
@@ -180,10 +243,110 @@ public class Keyboard
 		return false;
 	}
 	
-	public void Poll() {
-		
+	/**
+	 * Gets the next keyboard event. You can query which key caused the event by using
+	 * <code>getEventKey</code>. To get the state of that key, for that event, use
+	 * <code>getEventKeyState</code> - finally use <code>getEventCharacter</code> to get the
+	 * character for that event.
+	 *
+	 * @see com.jediminer543.util.input.Keyboard#getEventKey()
+	 * @see com.jediminer543.util.input.Keyboard#getEventKeyState()
+	 * @see com.jediminer543.util.input.Keyboard#getEventCharacter()
+	 * @return last event or null if no new events
+	 */
+	public Event nextEvent() {
+		if (events.size() > 0) {
+			Event old_event = current_event;
+			current_event = events.pop();
+			return old_event;
+		} else {
+			return null;
+		}
 	}
 	
+	/**
+	 * Compatibility method for lwjgl2 conversions, use nextEvent instead for more data;
+	 *
+	 * @see com.jediminer543.util.input.Keyboard#getEventKey()
+	 * @see com.jediminer543.util.input.Keyboard#getEventKeyState()
+	 * @see com.jediminer543.util.input.Keyboard#getEventCharacter()
+	 * @return last event or null if no new events
+	 */
+	public boolean next() {
+		return !(this.nextEvent() == null);
+	}
+	
+	/**
+	 * @see com.jediminer543.util.input.Keyboard#enableRepeatEvents(boolean)
+	 * @return true if the current event is a repeat event, false if
+	 * the current event is not a repeat even or if repeat events are disabled.
+	 */
+	public boolean isRepeatEvent() {
+		return this.current_event.repeat;
+	}
+	
+	/**
+	 * Gets the time in nanoseconds of the current event.
+	 * Only useful for relative comparisons with other
+	 * Keyboard events, as the absolute time has no defined
+	 * origin.
+	 * @return The time in nanoseconds of the current event
+	 */
+	public long getEventNanoseconds() {
+		return this.current_event.nanos;
+	}
+	
+	/**
+	 * Gets the state of the key that generated the
+	 * current event
+	 *
+	 * @return True if key was down, or false if released
+	 */
+	public boolean getEventKeyState() {
+			return this.current_event.state;
+	}
+	
+	/**
+	 * Please note that the key code returned is NOT valid against the
+	 * current keyboard layout. To get the actual character pressed call
+	 * getEventCharacter
+	 *
+	 * @return The key from the current event
+	 */
+	public int getEventKey() {
+		return this.current_event.key;
+	}
+	
+	/**
+	 * @return The character from the current event
+	 */
+	public char getEventCharacter() {
+		return (char) this.current_event.key;
+	}
+	
+	@SuppressWarnings("unused")
+	private static final class Event {
+		
+		/** The current keyboard event key being examined
+		 *  As this is GLFW keys are mapped to ascii char codes
+		 */
+		private int key;
+		
+		/** The current state of the key being examined in the event queue */
+		private boolean state;
+		
+		/** The current event time */
+		private long nanos;
+		
+		/** Is the current event a repeated event? */
+		private boolean repeat;
+		
+		private void reset() {
+			key = 0;
+			state = false;
+			repeat = false;
+		}
+	}
 	
 	
 }

@@ -28,12 +28,12 @@ public class Face extends Renderable
 		for (Vertex vertex: vertexes)
 		{
 			if (hasTexture) {
-				GL11.glTexCoord2f(vertex.texture.getX(), vertex.texture.getY());
+				GL11.glTexCoord2f(vertex.texture.x, vertex.texture.y);
 			}
 			if (hasNormal) {
-				GL11.glNormal3f(vertex.normal.getX(), vertex.normal.getY(), vertex.normal.getZ());
+				GL11.glNormal3f(vertex.normal.x, vertex.normal.y, vertex.normal.z);
 			}
-			GL11.glVertex3f(vertex.vertex.getX() * parent.scale.getX(), vertex.vertex.getY() * parent.scale.getY(), vertex.vertex.getZ() * parent.scale.getZ());
+			GL11.glVertex3f(vertex.vertex.x * parent.scale.x, vertex.vertex.y * parent.scale.y, vertex.vertex.z * parent.scale.z);
 		}
 
 	}

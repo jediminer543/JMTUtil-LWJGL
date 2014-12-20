@@ -3,6 +3,7 @@ package com.jediminer543.util.display;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.glfw.GLFW.*;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
@@ -12,6 +13,7 @@ import org.lwjgl.system.glfw.WindowCallback;
 
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.KeyEvent;
+import com.jediminer543.util.event.MouseButtonEvent;
 import com.jediminer543.util.event.MouseMoveEvent;
 import com.jediminer543.util.event.annotation.Input;
 import com.jediminer543.util.event.bus.InputBus;
@@ -25,6 +27,8 @@ public class Display implements Tickable
 	
 	private Keyboard keyboard;
 	private Mouse mouse;
+	
+	private boolean mouseGrabbed = true;
 	
 	private DisplayCallback callback = new DisplayCallback();
 	
@@ -93,6 +97,7 @@ public class Display implements Tickable
 		glfwSwapInterval(1);
         glfwShowWindow(windowID);
 		keyboard = new Keyboard(windowID);
+		mouse = new Mouse(windowID);
 	}
 
 	public void tick() {
@@ -100,6 +105,9 @@ public class Display implements Tickable
 	}
 	
 	public class DisplayCallback extends WindowCallback {
+		
+		double centerX = width / 2;
+		double centerY = height / 2;
 		
 		@Override
 		public void charMods(long arg0, int arg1, int arg2) {
@@ -118,11 +126,14 @@ public class Display implements Tickable
 			// TODO Auto-generated method stub
 			
 		}
-
+		
 		@Override
 		public void cursorPos(long window, double xpos, double ypos) {
-			InputBus.invoke(new MouseMoveEvent(window, xpos, ypos));
 			
+			if (mouseGrabbed) {
+				InputBus.invoke(new MouseMoveEvent(window, xpos - centerX, ypos - centerY));
+				glfwSetCursorPos(windowID, centerX, centerY);
+			}
 		}
 
 		@Override
@@ -139,13 +150,14 @@ public class Display implements Tickable
 
 		@Override
 		public void key(long window, int key, int scancode, int action, int mods) {
-			InputBus.invoke(new KeyEvent(window, key, scancode, action, mods));
+				InputBus.invoke(new KeyEvent(window, key, scancode, action, mods));
+
 			
 		}
 
 		@Override
 		public void mouseButton(long window, int button, int action, int mods) {
-			//TODO:mouseEventUpdate();
+			InputBus.invoke(new MouseButtonEvent(window, button, action, mods));
 			
 		}
 

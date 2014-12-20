@@ -13,8 +13,8 @@ public class MouseMoveEvent extends MouseEvent {
 	}
 
 	public MouseMoveEvent(long windowID, double xpos, double ypos) {
+		super(windowID);
 		this.xpos = xpos;
 		this.ypos = ypos;
-		this.windowID = windowID;
 	}
 }

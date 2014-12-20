@@ -2,9 +2,11 @@ package com.jediminer543.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
@@ -15,7 +17,8 @@ import com.jediminer543.util.gl.Project;
 import com.jediminer543.util.render.camera.DebugCamera;
 import com.jediminer543.util.render.model.Model;
 import com.jediminer543.util.render.model.ObjectLoader;
-import com.jediminer543.util.vector.Vector3f;
+
+import javax.vecmath.Vector3f;
 
 public class Game 
 {
@@ -51,11 +54,26 @@ public class Game
 	}
 	
 	public static void initGl() {
+		//FloatBuffer projection = BufferUtils.createFloatBuffer(16);
 		GLContext.createFromCurrent();
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        Project.gluPerspective(70, width / height, 0.01f, 100f);
-        //glGetFloat(GL_PROJECTION_MATRIX, GLOBALS.GLUMatrix);
+        float near = 0.01f;
+        float far = 100f;
+        float aspect = width / height;
+        float fov = 70f;
+        
+        //double left = -1*near*Math.tan((aspect*fov)/2);
+        //double right = far*Math.tan((aspect*fov)/2);
+        //double bottom = -1*near*Math.tan(fov/2);
+        //double top = far*Math.tan(fov/2);
+        Project.gluPerspective(fov, aspect, near, far);
+        //protoPerspective(70, aspect, near, far);
+        //glFrustum(-1.0f, 1.0f, -1.0f, 1.0f, 1f, 20.0f);
+        //glGetFloat(GL_PROJECTION_MATRIX, projection);
+        //while (projection.remaining() > 0) {
+        //	System.out.print(projection.get() + ",");
+        //}
         //glMatrixMode(GL_PROJECTION);
         //glLoadIdentity();
         //glOrtho(0, width, height, 0, 1, -1);
@@ -75,16 +93,17 @@ public class Game
 	public static void mainLoop() {
 		DebugCamera camera = new DebugCamera();
 		GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-		model.pos.translate(new Vector3f(-1f,0f,-1f));
-		model.rot.translate(new Vector3f(-45f,0f,-45f));
+		sphere.pos.add(new Vector3f(-10f,0f,-10f));
+		model.rot.add(new Vector3f(-45f,0f,-45f));
 		GLFW.glfwSetInputMode(mainDisplayID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		while (GLFW.glfwWindowShouldClose(DisplayHandler.getActive()) == GL11.GL_FALSE) {
+			GLFW.glfwPollEvents();
+			GLFW.glfwSwapBuffers(DisplayHandler.getActive());
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			camera.tick();
 			model.render();
 			sphere.render();
-			camera.tick();
-			GLFW.glfwSwapBuffers(DisplayHandler.getActive());
-			GLFW.glfwPollEvents();
+			
 		}
 		GLFW.glfwDestroyWindow(mainDisplayID);
 	}

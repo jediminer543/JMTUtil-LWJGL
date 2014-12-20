@@ -1,6 +1,6 @@
 package com.jediminer543.util.render.camera;
 
-import com.jediminer543.util.vector.Vector3f;
+import javax.vecmath.Vector3f;
 
 import com.jediminer543.util.handlers.time.Tickable;
 

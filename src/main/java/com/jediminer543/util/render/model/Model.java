@@ -3,8 +3,8 @@ package com.jediminer543.util.render.model;
 import com.jediminer543.util.render.Renderable;
 import com.jediminer543.util.render.Texture;
 import org.lwjgl.opengl.GL11;
-import com.jediminer543.util.vector.Vector2f;
-import com.jediminer543.util.vector.Vector3f;
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
 
 import java.io.File;
 import java.io.IOException;

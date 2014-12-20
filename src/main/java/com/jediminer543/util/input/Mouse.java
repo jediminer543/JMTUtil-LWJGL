@@ -1,6 +1,47 @@
 package com.jediminer543.util.input;
 
+import java.util.Stack;
+
+import org.lwjgl.system.glfw.GLFW;
+
+import com.jediminer543.util.event.InputEvent;
+import com.jediminer543.util.event.MouseButtonEvent;
+import com.jediminer543.util.event.MouseMoveEvent;
+import com.jediminer543.util.event.annotation.Input;
+import com.jediminer543.util.event.bus.InputBus;
+
 public class Mouse {
+	
+	@Input
+	public void onInput(InputEvent ie) {
+		if (ie.getWindowID() == this.windowID) {
+			if (ie instanceof MouseMoveEvent) {
+				MouseMoveEvent mme = (MouseMoveEvent) ie;
+				this.dx += mme.getXpos();
+				this.dy += mme.getYpos();
+				this.x += mme.getXpos();
+				this.y += mme.getYpos();
+				this.events.push(addEvent(x, y, null, null, null, null, null));
+			}
+			if (ie instanceof MouseButtonEvent) {
+				MouseButtonEvent mbe = (MouseButtonEvent) ie;
+				this.events.push(addEvent(null, null, mbe.getButton(), mbe.getAction(), null, null, null));
+			}
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private Event addEvent(Integer x, Integer y, Integer button, Integer buttonState, Integer wheelx, Integer wheely, Long nanos) {
+		Event event = new Event();
+		event.event_x = x != null ? x : this.x;
+		event.event_y = y != null ? y : this.y;
+		if (button != null) {
+			event.eventButton = button;
+			event.eventState = button == GLFW.GLFW_PRESS || button == GLFW.GLFW_REPEAT;
+		}
+		
+		return event;
+	}
 	
 	/**
 	 * Creates a mouse with a predefined windowID
@@ -8,6 +49,7 @@ public class Mouse {
 	 */
 	public Mouse(long windowID) {
 		this.windowID = windowID;
+		InputBus.register(this);
 	}
 	
 	/**
@@ -23,6 +65,12 @@ public class Mouse {
 		this.windowID = windowID;
 	}
 	
+	/** Mouse absolute X position in pixels */
+	private int				x;
+
+	/** Mouse absolute Y position in pixels */
+	private int				y;
+	
 	/** Delta X */
 	private int				dx;
 
@@ -34,6 +82,25 @@ public class Mouse {
 	
 	/** Delta Scroll y */
 	private int				dwheely;
+	
+	/** The current mouse event button being examined */
+	private int			eventButton;
+
+	/** The current state of the button being examined in the event queue */
+	private boolean		eventState;
+	
+	/** The current delta of the mouse in the event queue */
+	private int			event_dx;
+	private int			event_dy;
+	private int			event_dwheelx;
+	private int			event_dwheely;
+	
+	/** The current absolute position of the mouse in the event queue */
+	private int			event_x;
+	private int			event_y;
+	private long		event_nanos;
+	
+	private Stack<Event> events = new Stack<Event>();
 	
 	/**
 	 * Polls the mouse for its current state. Access the polled values using the
@@ -48,6 +115,7 @@ public class Mouse {
 	public void Poll() {
 		
 	}
+	
 	
 	/**
 	 * @return Movement on the x axis since last time getDX() was called.
@@ -64,6 +132,28 @@ public class Mouse {
 	public int getDY() {
 			int result = dy;
 			dy = 0;
+			return result;
+	}
+	
+	/**
+	 * Retrieves the absolute position. It will be clamped to
+	 * 0...height-1.
+	 *
+	 * @return Absolute y axis position of mouse
+	 */
+	public int getX() {
+			int result = x;
+			return result;
+	}
+
+	/**
+	 * Retrieves the absolute position. It will be clamped to
+	 * 0...height-1.
+	 *
+	 * @return Absolute y axis position of mouse
+	 */
+	public int getY() {
+			int result = y;
 			return result;
 	}
 
@@ -90,10 +180,100 @@ public class Mouse {
 	 * (and thus hidden). If grab is false, the getX() and getY()
 	 * will return delta movement in pixels clamped to the display
 	 * dimensions, from the center of the display.
-	 *
+	 * <strong>NYI</strong>
 	 * @param grab whether the mouse should be grabbed
 	 */
 	public void setGrabbed(boolean grab) {
 		
 	}
+	
+	/**
+	 * Gets the next mouse event. You can query which button caused the event by using
+	 * <code>getEventButton()</code> (if any). To get the state of that key, for that event, use
+	 * <code>getEventButtonState</code>. To get the current mouse delta values use <code>getEventDX()</code>
+	 * and <code>getEventDY()</code>.
+	 * @see org.lwjgl.input.Mouse#getEventButton()
+	 * @see org.lwjgl.input.Mouse#getEventButtonState()
+	 * @return true if a mouse event was read, false otherwise
+	 */
+	public boolean next() {
+		return false;
+	}
+
+	/**
+	 * @return Current events button. Returns -1 if no button state was changed
+	 */
+	public int getEventButton() {
+		return eventButton;
+	}
+
+	/**
+	 * Get the current events button state.
+	 * @return Current events button state.
+	 */
+	public boolean getEventButtonState() {
+		return eventState;
+	}
+
+	/**
+	 * @return Current events delta x.
+	 */
+	public int getEventDX() {
+		return event_dx;
+	}
+
+	/**
+	 * @return Current events delta y.
+	 */
+	public int getEventDY() {
+		return event_dy;
+	}
+
+	/**
+	 * @return Current events absolute x.
+	 */
+	public int getEventX() {
+		return event_x;
+	}
+
+	/**
+	 * @return Current events absolute y.
+	 */
+	public int getEventY() {
+		return event_y;
+	}
+
+	/**
+	 * @return Current events delta z
+	 */
+	public int getEventDWheelX() {
+		return event_dwheelx;
+	}
+
+	/**
+	 * Gets the time in nanoseconds of the current event.
+	 * Only useful for relative comparisons with other
+	 * Mouse events, as the absolute time has no defined
+	 * origin.
+	 *
+	 * @return The time in nanoseconds of the current event
+	 */
+	public long getEventNanoseconds() {
+		return event_nanos;
+	}
+	
+	@SuppressWarnings("unused")
+	private class Event {
+		/** The current mouse event button being examined */
+		private int			eventButton;
+
+		/** The current state of the button being examined in the event queue */
+		private boolean		eventState;
+		
+		/** The current absolute position of the mouse in the event queue */
+		private int			event_x;
+		private int			event_y;
+		private long		event_nanos;
+	}
+	
 }

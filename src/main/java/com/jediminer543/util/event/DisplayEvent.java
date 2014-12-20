@@ -7,4 +7,8 @@ public class DisplayEvent extends Event{
 		return windowID;
 	}
 	
+	public DisplayEvent(long windowID) {
+		this.windowID = windowID;
+	}
+	
 }

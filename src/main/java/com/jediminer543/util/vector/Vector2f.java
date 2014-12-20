@@ -40,6 +40,7 @@ import java.nio.FloatBuffer;
  *	A reconstruction of LWJGL-Util Vector code
  *	Cloned from original then modified
  */
+@Deprecated
 public class Vector2f extends Vector {
 	
 	private static final long serialVersionUID = 1L;

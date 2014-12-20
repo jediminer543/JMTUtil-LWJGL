@@ -21,8 +21,8 @@ public class KeyEvent extends InputEvent {
 	}
 
 	public KeyEvent(long windowID, int key, int scancode, int action, int mods) {
+		super(windowID);
 		this.type = InputType.Keyboard;
-		this.windowID = windowID;
 		this.key = key;
 		this.scancode = scancode;
 		this.action = action;

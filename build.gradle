@@ -17,10 +17,10 @@ mainClassName = "RunMain"
 applicationDefaultJvmArgs = ["-Djava.library.path=lib/natives"]
 
 sourceCompatibility = 1.7
-version = '0.1.1'
+version = '0.1.2'
 jar {
     manifest {
-        attributes 'Implementation-Title': 'JMTUtil', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'JMTUtil-LWJGL', 'Implementation-Version': version
     }
 }
 
@@ -50,7 +50,7 @@ jar {
 
 task fatJar(type: OneJar) {
 	mainClass = 'com.jediminer543.util.Game'
-    binLib = fileTree(dir: 'libs/natives', include: '*.jar')
+    binLib = fileTree(dir: 'libs/natives', include: '*.*')
 }
 
 uploadArchives {

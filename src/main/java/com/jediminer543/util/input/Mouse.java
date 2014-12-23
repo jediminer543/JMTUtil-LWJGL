@@ -38,6 +38,9 @@ public class Mouse {
 		if (button != null) {
 			event.eventButton = button;
 			event.eventState = button == GLFW.GLFW_PRESS || button == GLFW.GLFW_REPEAT;
+		} else {
+			event.eventButton = -1;
+			event.eventState = false;
 		}
 		
 		return event;
@@ -100,7 +103,12 @@ public class Mouse {
 	private int			event_y;
 	private long		event_nanos;
 	
+	private int			last_event_raw_x;
+	private int			last_event_raw_y;
+	
 	private Stack<Event> events = new Stack<Event>();
+
+	private Event current_event;
 	
 	/**
 	 * Polls the mouse for its current state. Access the polled values using the
@@ -187,6 +195,17 @@ public class Mouse {
 		
 	}
 	
+	public Event nextEvent() {
+		if (events.size() > 0) {
+			Event old_event = current_event;
+			current_event = events.pop();
+			this.unpackEvent();
+			return old_event;
+		} else {
+			return null;
+		}
+	}
+	
 	/**
 	 * Gets the next mouse event. You can query which button caused the event by using
 	 * <code>getEventButton()</code> (if any). To get the state of that key, for that event, use
@@ -197,7 +216,19 @@ public class Mouse {
 	 * @return true if a mouse event was read, false otherwise
 	 */
 	public boolean next() {
-		return false;
+		return !(this.nextEvent() == null);
+	}
+	
+	private void unpackEvent() {
+				event_dx = current_event.event_x - last_event_raw_y;
+				event_dy = current_event.event_y - last_event_raw_y;
+				event_x += event_dx;
+				event_y += event_dy;
+				last_event_raw_x = event_x;
+				last_event_raw_y = event_y;
+				eventButton = current_event.eventButton;
+				eventState = current_event.eventState;
+				
 	}
 
 	/**

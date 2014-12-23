@@ -7,7 +7,6 @@ import static org.lwjgl.system.glfw.GLFW.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
-import org.lwjgl.system.glfw.GLFW;
 import org.lwjgl.system.glfw.GLFWvidmode;
 import org.lwjgl.system.glfw.WindowCallback;
 
@@ -25,10 +24,13 @@ public class Display implements Tickable
 {
 	private long windowID;
 	
+	@SuppressWarnings("unused")
 	private Keyboard keyboard;
+	@SuppressWarnings("unused")
 	private Mouse mouse;
 	
 	private boolean mouseGrabbed = true;
+	 
 	
 	private DisplayCallback callback = new DisplayCallback();
 	
@@ -42,6 +44,8 @@ public class Display implements Tickable
 	public String title;
 	
 	public long monitor, share = 0L;
+	
+	 
 	
 	@Input
 	public void onInput(InputEvent ie) {

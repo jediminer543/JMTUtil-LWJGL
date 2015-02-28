@@ -45,13 +45,11 @@ public class DebugCamera extends Camera
 
 	public void moveCamera()
 	{
-		//GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		//GL11.glRotatef(0, 1, 1, 1);
 		GL11.glLoadIdentity();
-		GL11.glRotatef(rot.x, 0, 1, 0);
+		//GL11.glRotatef(180, 0, 0, 1);
 		GL11.glRotatef(rot.y, 1, 0, 0);
+		GL11.glRotatef(rot.x, 0, 1, 0);
 		GL11.glTranslatef(pos.x, pos.y, pos.z);
-		//GL11.glRotatef(rot.z, 0, 0, 0);
 	}
 
 	@Input
@@ -94,26 +92,31 @@ public class DebugCamera extends Camera
 //			}
 //		}
 //		else 
-//		if (ie instanceof MouseEvent) {
-//			if (ie instanceof MouseMoveEvent) {
-//				MouseMoveEvent mme = (MouseMoveEvent) ie;
-//				DX += mme.getXpos() * 0.15;
-//				DY -= mme.getYpos() * 0.1;
-//			}
-//		}
+		if (ie instanceof MouseEvent) {
+			if (ie instanceof MouseMoveEvent) {
+				MouseMoveEvent mme = (MouseMoveEvent) ie;
+				DX += mme.getXpos();
+				DY -= mme.getYpos();
+			}
+		}
 		
 	}
 	
 	public void detectInput()
 	{
 		//if (Mouse.isGrabbed()) {
-			int DX = mouse.getDX();
-			int DY = mouse.getDY();
+			//int DX = mouse.getDX();
+			//int DY = mouse.getDY();
 			
-			rot.x += DX * 0.15;
-			rot.y += -DY * 0.1;
+		rot.x += DX * 0.15;
+		rot.y += -DY * 0.1;
 		//}
 		
+		if (rot.y > 90)
+			rot.y = 90;
+		if (rot.y < -90)
+			rot.y = -90;
+			
 		if (keyboard.isKeyDown(Keyboard.KEY_W))
 			lookVelocity.x += (float) (10 * 0.01);
 		if (keyboard.isKeyDown(Keyboard.KEY_S))

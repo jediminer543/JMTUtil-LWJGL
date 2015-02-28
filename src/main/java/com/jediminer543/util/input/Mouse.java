@@ -2,7 +2,7 @@ package com.jediminer543.util.input;
 
 import java.util.Stack;
 
-import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.MouseButtonEvent;

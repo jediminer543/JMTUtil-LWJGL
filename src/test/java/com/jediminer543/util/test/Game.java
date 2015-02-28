@@ -1,8 +1,9 @@
-package com.jediminer543.util;
+package com.jediminer543.util.test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -10,9 +11,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 
+import com.jediminer543.util.Natives;
 import com.jediminer543.util.display.DisplayHandler;
+import com.jediminer543.util.file.CFL;
 import com.jediminer543.util.gl.Project;
 import com.jediminer543.util.render.camera.DebugCamera;
 import com.jediminer543.util.render.model.Model;
@@ -34,8 +37,9 @@ public class Game
 	
 	public static void main(String[] args) throws IOException
 	{
-		model = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\cube.obj"));
-		sphere = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\sphere2.obj"));
+		Natives.setNativePath();
+		model = ObjectLoader.loadModel(CFL.loadFileFromClasspath("cube.obj"));
+		sphere = ObjectLoader.loadModel(CFL.loadFileFromClasspath("sphere2.obj"));
 		init();
 		mainLoop();
 	}
@@ -58,16 +62,31 @@ public class Game
 		GLContext.createFromCurrent();
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        float near = 0.01f;
-        float far = 100f;
-        float aspect = width / height;
-        float fov = 70f;
         
-        //double left = -1*near*Math.tan((aspect*fov)/2);
-        //double right = far*Math.tan((aspect*fov)/2);
-        //double bottom = -1*near*Math.tan(fov/2);
-        //double top = far*Math.tan(fov/2);
-        Project.gluPerspective(fov, aspect, near, far);
+        //float right = -width/2;
+        //float left = width/2;
+        //float top = height/2;
+        //float bottom = -height/2;
+        //float near = 0f;
+        //float far = 20f;
+        
+        /*
+        FloatBuffer orthoMatrix = BufferUtils.createFloatBuffer(16);
+        float[] orthoArray = {2/(right-left), 0, 0, -((right+left)/(right-left)),
+        					0, 2/(top-bottom), 0, -((top+bottom)/(top-bottom)),
+        					0, 0, -2/(far - near), -((far+near)/(far-near)),
+        					0, 0, 0, 1};
+        System.out.println(Arrays.toString(orthoArray));
+        //orthoMatrix = orthoMatrix.put(orthoArray);
+        for(float f : orthoArray)
+        {
+           orthoMatrix.put(f);
+        }
+        
+        glLoadMatrix(orthoMatrix);*/
+        
+        
+        Project.gluPerspective(70f, width/height, 0.1f, 100f);
         //protoPerspective(70, aspect, near, far);
         //glFrustum(-1.0f, 1.0f, -1.0f, 1.0f, 1f, 20.0f);
         //glGetFloat(GL_PROJECTION_MATRIX, projection);
@@ -76,7 +95,7 @@ public class Game
         //}
         //glMatrixMode(GL_PROJECTION);
         //glLoadIdentity();
-        //glOrtho(0, width, height, 0, 1, -1);
+        //glOrtho(right, left, bottom, top, near, far);
         //glGetFloat(GL_PROJECTION_MATRIX, GLOBALS.HUDMatrix);
         //glLoadMatrix(GLOBALS.GLUMatrix);
         glMatrixMode(GL_MODELVIEW);
@@ -92,17 +111,17 @@ public class Game
 	
 	public static void mainLoop() {
 		DebugCamera camera = new DebugCamera();
-		GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		sphere.pos.add(new Vector3f(-10f,0f,-10f));
-		model.rot.add(new Vector3f(-45f,0f,-45f));
+		//model.rot.add(new Vector3f(-45f,0f,-45f));
 		GLFW.glfwSetInputMode(mainDisplayID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		while (GLFW.glfwWindowShouldClose(DisplayHandler.getActive()) == GL11.GL_FALSE) {
 			GLFW.glfwPollEvents();
 			GLFW.glfwSwapBuffers(DisplayHandler.getActive());
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			camera.tick();
 			model.render();
 			sphere.render();
+			camera.tick();
 			
 		}
 		GLFW.glfwDestroyWindow(mainDisplayID);

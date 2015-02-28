@@ -18,8 +18,8 @@
 ###########
 # Project configuration should be handled by gradle
 # Leaving .project so eclipse can detect gradle config
-# USE plugin: 
 .classpath
+.project
 /.settings
 
 # Idea #

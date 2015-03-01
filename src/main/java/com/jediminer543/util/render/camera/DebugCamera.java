@@ -4,13 +4,11 @@ import org.lwjgl.opengl.GL11;
 
 import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.event.InputEvent;
-import com.jediminer543.util.event.KeyEvent;
-import com.jediminer543.util.event.MouseEvent;
-import com.jediminer543.util.event.MouseMoveEvent;
 import com.jediminer543.util.event.annotation.Input;
 import com.jediminer543.util.event.bus.InputBus;
 import com.jediminer543.util.input.Keyboard;
 import com.jediminer543.util.input.Mouse;
+
 import javax.vecmath.Vector3f;
 
 /**
@@ -35,9 +33,9 @@ public class DebugCamera extends Camera
 	@Override
 	public void tick()
 	{
-		rot.x += DX * 0.15;
-		rot.y += -DY * 0.1;
-		DX = DY = 0;
+		//rot.x += DX * 0.15;
+		//rot.y += DY * 0.1;
+		//DX = DY = 0;
 		convertLook();
 		detectInput();
 		moveCamera();
@@ -92,24 +90,24 @@ public class DebugCamera extends Camera
 //			}
 //		}
 //		else 
-		if (ie instanceof MouseEvent) {
-			if (ie instanceof MouseMoveEvent) {
-				MouseMoveEvent mme = (MouseMoveEvent) ie;
-				DX += mme.getXpos();
-				DY -= mme.getYpos();
-			}
-		}
+//		if (ie instanceof MouseEvent) {
+//			if (ie instanceof MouseMoveEvent) {
+//				MouseMoveEvent mme = (MouseMoveEvent) ie;
+//				DX += mme.getXpos();
+//				DY += mme.getYpos();
+//			}
+//		}
 		
 	}
 	
 	public void detectInput()
 	{
 		//if (Mouse.isGrabbed()) {
-			//int DX = mouse.getDX();
-			//int DY = mouse.getDY();
+			int DX = mouse.getDX();
+			int DY = mouse.getDY();
 			
-		rot.x += DX * 0.15;
-		rot.y += -DY * 0.1;
+			rot.x += DX * 0.15;
+			rot.y += DY * 0.1;
 		//}
 		
 		if (rot.y > 90)
@@ -144,17 +142,17 @@ public class DebugCamera extends Camera
 	{
 		
 		float Hypotonuse = lookVelocity.x; //TODO add delta
-		float Ajacent = Hypotonuse * (float) Math.cos(Math.toRadians(rot.x));
-		float Oposite = Hypotonuse * (float) Math.sin(Math.toRadians(rot.x)); 
-		pos.z += Ajacent; 
+		float Ajacent =  Hypotonuse * (float) Math.cos(Math.toRadians(rot.x));
+		float Oposite = Hypotonuse * (float) Math.sin(Math.toRadians(rot.x));
+		pos.z += Ajacent;
 		pos.x -= Oposite;
-
+		
 		float HypotonuseP = lookVelocity.z; //TODO add delta
-		float AjacentP = HypotonuseP * (float) Math.cos(Math.toRadians(rot.x - 90));
-		float OpositeP = HypotonuseP * (float) Math.sin(Math.toRadians(rot.x - 90)); 
+		float AjacentP =  HypotonuseP * (float) Math.cos(Math.toRadians(rot.x-90));
+		float OpositeP = HypotonuseP * (float) Math.sin(Math.toRadians(rot.x-90));
 		pos.z += AjacentP;
 		pos.x -= OpositeP;
-
+		
 		lookVelocity = new Vector3f();
 	}
 	

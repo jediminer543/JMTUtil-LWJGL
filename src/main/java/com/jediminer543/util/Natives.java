@@ -31,7 +31,7 @@ public class Natives {
 		
 		System.setProperty("java.library.path", path.toString());
 		
-		System.out.println(System.getProperty("java.library.path"));
+		//System.out.println(System.getProperty("java.library.path"));
 	}
 
 }

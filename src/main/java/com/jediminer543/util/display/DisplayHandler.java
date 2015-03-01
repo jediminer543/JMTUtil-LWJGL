@@ -28,9 +28,6 @@ public class DisplayHandler {
 			throw new IllegalArgumentException("Display handler not initialised");
 		}
 		Display display = new Display(title, width, height, monitor, share);
-		if (display.getWindowID() > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Max display cap reached");
-		}
 		display.init();
 		long pos = display.getWindowID();
 		displays.put(pos, display);

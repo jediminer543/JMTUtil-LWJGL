@@ -1,15 +1,9 @@
 package com.jediminer543.util.test;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.Arrays;
-
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.glfw.GLFW;
 

@@ -30,7 +30,6 @@ public class Mouse {
 		}
 	}
 	
-	@SuppressWarnings("unused")
 	private Event addEvent(Integer x, Integer y, Integer button, Integer buttonState, Integer wheelx, Integer wheely, Long nanos) {
 		Event event = new Event();
 		event.event_x = x != null ? x : this.x;
@@ -93,6 +92,7 @@ public class Mouse {
 	private int			event_dx;
 	private int			event_dy;
 	private int			event_dwheelx;
+	@SuppressWarnings("unused")
 	private int			event_dwheely;
 	
 	/** The current absolute position of the mouse in the event queue */

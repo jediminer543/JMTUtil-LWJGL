@@ -36,7 +36,7 @@ dependencies {
 test {
     systemProperties 'property': 'value'
 }
-
+/*
 jar {
 	from {
 		configurations.compile.collect {
@@ -47,7 +47,7 @@ jar {
 		}
 	}
 }
-
+*/
 task fatJar(type: OneJar) {
 	mainClass = 'com.jediminer543.util.Game'
     binLib = fileTree(dir: 'libs/natives', include: '*.*')

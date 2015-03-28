@@ -10,7 +10,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 
 import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.gl.Project;

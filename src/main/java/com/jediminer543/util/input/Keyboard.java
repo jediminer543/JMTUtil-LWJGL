@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.KeyEvent;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import com.jediminer543.util.input.Keyboard;
 
 public class DisplayHandler {

@@ -50,10 +50,10 @@ public class Texture
 
 		bind();
 
-        //glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		//glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-		//glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
@@ -68,6 +68,10 @@ public class Texture
 	public void bind()
 	{
 		glEnable(GL_TEXTURE_2D);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 		glBindTexture(target, id);
 	}
 

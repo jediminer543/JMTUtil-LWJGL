@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.glfw.*;
 
 import com.jediminer543.util.display.Display.DisplayCallbacks.DisplayCursorPosCallback;
@@ -74,7 +75,16 @@ public class Display implements Tickable
 		InputBus.register(this);
 	}
 	
+	public void makeActive() {
+		DisplayHandler.activeDisplayPos = windowID;
+		glfwMakeContextCurrent(windowID);
+		GLContext.createFromCurrent();
+	}
+	
 	public void init() {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			
+		}
 		glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -99,6 +109,10 @@ public class Display implements Tickable
         glfwShowWindow(windowID);
 		keyboard = new Keyboard(windowID);
 		mouse = new Mouse(windowID);
+	}
+	
+	public void setMouseGrabbed(boolean grab) {
+		this.mouseGrabbed = grab;
 	}
 	
 	public boolean shouldClose() {

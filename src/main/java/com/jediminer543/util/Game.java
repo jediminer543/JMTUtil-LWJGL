@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.glfw.GLFW;
@@ -44,6 +45,8 @@ public class Game
 		initDisplay();
 		initGl();
 		model.init();
+		model.mtl.materials.get(0).texture.setFilter(GL11.GL_NEAREST);
+		model.mtl.materials.get(0).texture.setWrap(GL12.GL_CLAMP_TO_EDGE);
 		sphere.init();
 	}
 	

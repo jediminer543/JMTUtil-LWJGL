@@ -109,7 +109,7 @@ public class DebugCamera extends Camera
 		int DY = mouse.getDY();
 		
 		rot.x += DX * 0.15;
-		rot.y += -DY * 0.1;
+		rot.y += DY * 0.1;
 		//}
 		
 		if (keyboard.isKeyDown(Keyboard.KEY_W))

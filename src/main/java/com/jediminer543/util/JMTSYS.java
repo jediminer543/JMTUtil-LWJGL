@@ -11,7 +11,7 @@ import org.lwjgl.LWJGLUtil;
  * @author Jediminer543
  *
  */
-public class JSYS {
+public class JMTSYS {
 	public static long getTimerResolution() {
 		return 1000;
 	}

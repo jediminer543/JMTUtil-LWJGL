@@ -9,7 +9,7 @@ import com.jediminer543.util.input.Keyboard;
 
 public class DisplayHandler {
 	
-	private static long activeDisplayPos = 0;
+	static long activeDisplayPos = 0;
 	
 	private static Map<Long, Display> displays = new HashMap<Long, Display>();
 	

@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.MouseButtonEvent;
 import com.jediminer543.util.event.MouseMoveEvent;
@@ -17,10 +18,18 @@ public class Mouse {
 		if (ie.getWindowID() == this.windowID) {
 			if (ie instanceof MouseMoveEvent) {
 				MouseMoveEvent mme = (MouseMoveEvent) ie;
-				this.dx += mme.getXpos();
-				this.dy += mme.getYpos();
-				this.x += mme.getXpos();
-				this.y += mme.getYpos();
+				if (mme.isGrabbed()) {
+					this.dx += mme.getXpos();
+					this.dy += mme.getYpos();
+					this.x += mme.getXpos();
+					this.y += mme.getYpos();
+				}
+				else {
+					this.dx = mme.getXpos();
+					this.dy = mme.getYpos();
+					this.x = mme.getXpos();
+					this.y = mme.getYpos();
+				}
 				this.events.push(addEvent(x, y, null, null, null, null, null));
 			}
 			if (ie instanceof MouseButtonEvent) {
@@ -30,8 +39,7 @@ public class Mouse {
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	private Event addEvent(Integer x, Integer y, Integer button, Integer buttonState, Integer wheelx, Integer wheely, Long nanos) {
+	private Event addEvent(Double x, Double y, Integer button, Integer buttonState, Double wheelx, Double wheely, Long nanos) {
 		Event event = new Event();
 		event.event_x = x != null ? x : this.x;
 		event.event_y = y != null ? y : this.y;
@@ -69,22 +77,22 @@ public class Mouse {
 	}
 	
 	/** Mouse absolute X position in pixels */
-	private int				x;
+	private double				x;
 
 	/** Mouse absolute Y position in pixels */
-	private int				y;
+	private double				y;
 	
 	/** Delta X */
-	private int				dx;
+	private double				dx;
 
 	/** Delta Y */
-	private int				dy;
+	private double				dy;
 
 	/** Delta Scroll x */
-	private int				dwheelx;
+	private double				dwheelx;
 	
 	/** Delta Scroll y */
-	private int				dwheely;
+	private double				dwheely;
 	
 	/** The current mouse event button being examined */
 	private int			eventButton;
@@ -93,18 +101,18 @@ public class Mouse {
 	private boolean		eventState;
 	
 	/** The current delta of the mouse in the event queue */
-	private int			event_dx;
-	private int			event_dy;
-	private int			event_dwheelx;
-	private int			event_dwheely;
+	private double			event_dx;
+	private double			event_dy;
+	private double			event_dwheelx;
+	private double			event_dwheely;
 	
 	/** The current absolute position of the mouse in the event queue */
-	private int			event_x;
-	private int			event_y;
+	private double			event_x;
+	private double			event_y;
 	private long		event_nanos;
 	
-	private int			last_event_raw_x;
-	private int			last_event_raw_y;
+	private double			last_event_raw_x;
+	private double			last_event_raw_y;
 	
 	private Stack<Event> events = new Stack<Event>();
 
@@ -128,8 +136,8 @@ public class Mouse {
 	/**
 	 * @return Movement on the x axis since last time getDX() was called.
 	 */
-	public int getDX() {
-			int result = dx;
+	public double getDX() {
+			double result = dx;
 			dx = 0;
 			return result;
 	}
@@ -137,8 +145,8 @@ public class Mouse {
 	/**
 	 * @return Movement on the y axis since last time getDY() was called.
 	 */
-	public int getDY() {
-			int result = dy;
+	public double getDY() {
+			double result = dy;
 			dy = 0;
 			return result;
 	}
@@ -149,8 +157,8 @@ public class Mouse {
 	 *
 	 * @return Absolute y axis position of mouse
 	 */
-	public int getX() {
-			int result = x;
+	public double getX() {
+			double result = x;
 			return result;
 	}
 
@@ -160,16 +168,16 @@ public class Mouse {
 	 *
 	 * @return Absolute y axis position of mouse
 	 */
-	public int getY() {
-			int result = y;
+	public double getY() {
+			double result = y;
 			return result;
 	}
 
 	/**
 	 * @return Movement of the wheel on x axis since last time getDWheelX() was called
 	 */
-	public int getDWheelX() {
-			int result = dwheelx;
+	public double getDWheelX() {
+			double result = dwheelx;
 			dwheelx = 0;
 			return result;
 	}
@@ -177,8 +185,8 @@ public class Mouse {
 	/**
 	 * @return Movement of the wheel on y axis since last time getDWheelY() was called
 	 */
-	public int getDWheelY() {
-			int result = dwheely;
+	public double getDWheelY() {
+			double result = dwheely;
 			dwheely = 0;
 			return result;
 	}
@@ -192,7 +200,7 @@ public class Mouse {
 	 * @param grab whether the mouse should be grabbed
 	 */
 	public void setGrabbed(boolean grab) {
-		
+		DisplayHandler.setMouseGrabbed(windowID, grab);
 	}
 	
 	public Event nextEvent() {
@@ -249,35 +257,35 @@ public class Mouse {
 	/**
 	 * @return Current events delta x.
 	 */
-	public int getEventDX() {
+	public double getEventDX() {
 		return event_dx;
 	}
 
 	/**
 	 * @return Current events delta y.
 	 */
-	public int getEventDY() {
+	public double getEventDY() {
 		return event_dy;
 	}
 
 	/**
 	 * @return Current events absolute x.
 	 */
-	public int getEventX() {
+	public double getEventX() {
 		return event_x;
 	}
 
 	/**
 	 * @return Current events absolute y.
 	 */
-	public int getEventY() {
+	public double getEventY() {
 		return event_y;
 	}
 
 	/**
 	 * @return Current events delta z
 	 */
-	public int getEventDWheelX() {
+	public double getEventDWheelX() {
 		return event_dwheelx;
 	}
 
@@ -302,8 +310,8 @@ public class Mouse {
 		private boolean		eventState;
 		
 		/** The current absolute position of the mouse in the event queue */
-		private int			event_x;
-		private int			event_y;
+		private double			event_x;
+		private double			event_y;
 		private long		event_nanos;
 	}
 	

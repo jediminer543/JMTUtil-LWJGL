@@ -6,8 +6,8 @@ public class MouseButtonEvent extends MouseEvent{
 	private int action;
 	private int mods;
 	
-	public MouseButtonEvent(long windowID, int button, int action, int mods) {
-		super(windowID);
+	public MouseButtonEvent(long windowID, boolean grabbed, int button, int action, int mods) {
+		super(windowID, grabbed);
 		this.action = action;
 		this.button = button;
 		this.mods = mods;

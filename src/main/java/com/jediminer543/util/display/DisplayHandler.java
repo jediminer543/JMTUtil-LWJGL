@@ -33,8 +33,13 @@ public class DisplayHandler {
 		}
 		display.init();
 		long pos = display.getWindowID();
-		displays.put(pos, display);
+		registerDisplay(display);
 		return pos;
+	}
+	
+	static void registerDisplay(Display display) {
+		long pos = display.getWindowID();
+		displays.put(pos, display);
 	}
 	
 	public static void setActive(long windowID) {
@@ -44,6 +49,10 @@ public class DisplayHandler {
 	
 	public static long getActive() {
 		return activeDisplayPos;
+	}
+	
+	public static void setMouseGrabbed(long windowID, boolean grabbed) {
+		displays.get(windowID).setMouseGrabbed(grabbed);
 	}
 	
 	public static Keyboard getDisplayKeyboard(long windowID) {

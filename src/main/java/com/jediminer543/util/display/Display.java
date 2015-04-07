@@ -33,7 +33,7 @@ public class Display implements Tickable
 	//@SuppressWarnings("unused")
 	Mouse mouse;
 	
-	private boolean mouseGrabbed = true;
+	private boolean mouseGrabbed = false;
 	
 	DisplayCallbacks callbacks = new DisplayCallbacks();
 	private DisplayCursorPosCallback cpcallback = callbacks.new DisplayCursorPosCallback();
@@ -49,7 +49,7 @@ public class Display implements Tickable
 	
 	public String title;
 	
-	public long monitor, share = 0L;
+	long monitor, share = 0L;
 	
 	public boolean useCloseKey = true;
 	public int closeKey = Keyboard.KEY_ESCAPE;
@@ -72,6 +72,7 @@ public class Display implements Tickable
 		this.height = height;
 		this.monitor = monitor;
 		this.share = share;
+		DisplayHandler.registerDisplay(this);
 		InputBus.register(this);
 	}
 	
@@ -113,6 +114,10 @@ public class Display implements Tickable
 	
 	public void setMouseGrabbed(boolean grab) {
 		this.mouseGrabbed = grab;
+		if (grab)
+		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+		else
+		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 	}
 	
 	public boolean shouldClose() {
@@ -156,11 +161,11 @@ public class Display implements Tickable
 		@Override
 		public void invoke(long window, double xpos, double ypos) {
 			if (mouseGrabbed) {
-				InputBus.invoke(new MouseMoveEvent(window, xpos - getCenterX(), ypos - getCenterY()));
+				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos - getCenterX(), ypos - getCenterY()));
 				glfwSetCursorPos(windowID, getCenterX(), getCenterY());
 			}
 			else {
-				InputBus.invoke(new MouseMoveEvent(window, xpos, ypos));
+				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos, ypos));
 			}
 		}
 	}
@@ -189,7 +194,7 @@ public class Display implements Tickable
 	public class DisplayMouseButtonCallback extends GLFWMouseButtonCallback {
 		@Override
 		public void invoke(long window, int button, int action, int mods) {
-			InputBus.invoke(new MouseButtonEvent(window, button, action, mods));
+			InputBus.invoke(new MouseButtonEvent(window, mouseGrabbed, button, action, mods));
 		}
 	}
 	

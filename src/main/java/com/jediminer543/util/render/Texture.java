@@ -68,11 +68,11 @@ public class Texture
 	public void bind()
 	{
 		glEnable(GL_TEXTURE_2D);
+		glBindTexture(target, id);
 		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
-		glBindTexture(target, id);
 	}
 
 	public int getWidth() {

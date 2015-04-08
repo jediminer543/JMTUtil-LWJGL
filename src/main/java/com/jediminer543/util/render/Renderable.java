@@ -10,7 +10,6 @@ public abstract class Renderable
 	public Vector3f pos = new Vector3f();
 	public Vector3f rot = new Vector3f();
 	public boolean drawnFrame = false;
-	public RenderLayer layer = RenderLayer.base;
 	public RenderType type = RenderType.Ortho;
 
 	public abstract void render();

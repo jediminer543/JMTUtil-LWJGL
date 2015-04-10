@@ -25,10 +25,10 @@ public class Mouse {
 					this.y += mme.getYpos();
 				}
 				else {
-					this.dx = mme.getXpos();
-					this.dy = mme.getYpos();
-					this.x = mme.getXpos();
-					this.y = mme.getYpos();
+					this.dx = (int) mme.getXpos();
+					this.dy = (int) mme.getYpos();
+					this.x = (int) mme.getXpos();
+					this.y = (int) mme.getYpos();
 				}
 				this.events.push(addEvent(x, y, null, null, null, null, null));
 			}
@@ -39,7 +39,7 @@ public class Mouse {
 		}
 	}
 	
-	private Event addEvent(Double x, Double y, Integer button, Integer buttonState, Double wheelx, Double wheely, Long nanos) {
+	private Event addEvent(Integer x, Integer y, Integer button, Integer buttonState, Integer wheelx, Integer wheely, Long nanos) {
 		Event event = new Event();
 		event.event_x = x != null ? x : this.x;
 		event.event_y = y != null ? y : this.y;
@@ -77,22 +77,22 @@ public class Mouse {
 	}
 	
 	/** Mouse absolute X position in pixels */
-	private double				x;
+	private int				x;
 
 	/** Mouse absolute Y position in pixels */
-	private double				y;
+	private int				y;
 	
 	/** Delta X */
-	private double				dx;
+	private int				dx;
 
 	/** Delta Y */
-	private double				dy;
+	private int				dy;
 
 	/** Delta Scroll x */
-	private double				dwheelx;
+	private int				dwheelx;
 	
 	/** Delta Scroll y */
-	private double				dwheely;
+	private int				dwheely;
 	
 	/** The current mouse event button being examined */
 	private int			eventButton;
@@ -101,18 +101,18 @@ public class Mouse {
 	private boolean		eventState;
 	
 	/** The current delta of the mouse in the event queue */
-	private double			event_dx;
-	private double			event_dy;
-	private double			event_dwheelx;
-	private double			event_dwheely;
+	private int			event_dx;
+	private int			event_dy;
+	private int			event_dwheelx;
+	private int			event_dwheely;
 	
 	/** The current absolute position of the mouse in the event queue */
-	private double			event_x;
-	private double			event_y;
+	private int			event_x;
+	private int			event_y;
 	private long		event_nanos;
 	
-	private double			last_event_raw_x;
-	private double			last_event_raw_y;
+	private int			last_event_raw_x;
+	private int			last_event_raw_y;
 	
 	private Stack<Event> events = new Stack<Event>();
 
@@ -136,8 +136,8 @@ public class Mouse {
 	/**
 	 * @return Movement on the x axis since last time getDX() was called.
 	 */
-	public double getDX() {
-			double result = dx;
+	public int getDX() {
+			int result = dx;
 			dx = 0;
 			return result;
 	}
@@ -145,8 +145,8 @@ public class Mouse {
 	/**
 	 * @return Movement on the y axis since last time getDY() was called.
 	 */
-	public double getDY() {
-			double result = dy;
+	public int getDY() {
+			int result = dy;
 			dy = 0;
 			return result;
 	}
@@ -157,8 +157,8 @@ public class Mouse {
 	 *
 	 * @return Absolute y axis position of mouse
 	 */
-	public double getX() {
-			double result = x;
+	public int getX() {
+			int result = x;
 			return result;
 	}
 
@@ -168,16 +168,16 @@ public class Mouse {
 	 *
 	 * @return Absolute y axis position of mouse
 	 */
-	public double getY() {
-			double result = y;
+	public int getY() {
+			int result = y;
 			return result;
 	}
 
 	/**
 	 * @return Movement of the wheel on x axis since last time getDWheelX() was called
 	 */
-	public double getDWheelX() {
-			double result = dwheelx;
+	public int getDWheelX() {
+			int result = dwheelx;
 			dwheelx = 0;
 			return result;
 	}
@@ -185,8 +185,8 @@ public class Mouse {
 	/**
 	 * @return Movement of the wheel on y axis since last time getDWheelY() was called
 	 */
-	public double getDWheelY() {
-			double result = dwheely;
+	public int getDWheelY() {
+			int result = dwheely;
 			dwheely = 0;
 			return result;
 	}
@@ -257,35 +257,35 @@ public class Mouse {
 	/**
 	 * @return Current events delta x.
 	 */
-	public double getEventDX() {
+	public int getEventDX() {
 		return event_dx;
 	}
 
 	/**
 	 * @return Current events delta y.
 	 */
-	public double getEventDY() {
+	public int getEventDY() {
 		return event_dy;
 	}
 
 	/**
 	 * @return Current events absolute x.
 	 */
-	public double getEventX() {
+	public int getEventX() {
 		return event_x;
 	}
 
 	/**
 	 * @return Current events absolute y.
 	 */
-	public double getEventY() {
+	public int getEventY() {
 		return event_y;
 	}
 
 	/**
 	 * @return Current events delta z
 	 */
-	public double getEventDWheelX() {
+	public int getEventDWheelX() {
 		return event_dwheelx;
 	}
 
@@ -310,8 +310,8 @@ public class Mouse {
 		private boolean		eventState;
 		
 		/** The current absolute position of the mouse in the event queue */
-		private double			event_x;
-		private double			event_y;
+		private int			event_x;
+		private int			event_y;
 		private long		event_nanos;
 	}
 	

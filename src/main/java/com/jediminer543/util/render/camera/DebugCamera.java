@@ -46,8 +46,8 @@ public class DebugCamera extends Camera
 	void detectInput()
 	{
 		//if (Mouse.isGrabbed()) {
-		float DX = (float) mouse.getDX();
-		float DY = (float) mouse.getDY();
+		float DX =  mouse.getDX();
+		float DY =  mouse.getDY();
 		
 		rot.x += DX * 0.15;
 		rot.y += DY * 0.1;

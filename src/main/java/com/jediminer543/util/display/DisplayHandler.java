@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.glfw.GLFW;
+
 import com.jediminer543.util.input.Keyboard;
+import com.jediminer543.util.input.Mouse;
 
 public class DisplayHandler {
 	
@@ -56,8 +58,11 @@ public class DisplayHandler {
 	}
 	
 	public static Keyboard getDisplayKeyboard(long windowID) {
-		
-		return null;
+		return displays.get(windowID).getKeyboard();
+	}
+	
+	public static Mouse getDisplayMouse(long windowID) {
+		return displays.get(windowID).getMouse();
 	}
 
 }

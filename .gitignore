@@ -34,5 +34,11 @@
 # Error files
 hs_err_pid*.log
 
+# File Changes#
+###############
+# Hides files that have been renamed
+*.old
+/*.old
+
 
 

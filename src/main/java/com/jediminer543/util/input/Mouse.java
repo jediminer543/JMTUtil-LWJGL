@@ -45,7 +45,7 @@ public class Mouse {
 		event.event_y = y != null ? y : this.y;
 		if (button != null) {
 			event.eventButton = button;
-			event.eventState = button == GLFW.GLFW_PRESS || button == GLFW.GLFW_REPEAT;
+			event.eventState = (buttonState == GLFW.GLFW_PRESS) || (buttonState == GLFW.GLFW_REPEAT);
 		} else {
 			event.eventButton = -1;
 			event.eventState = false;
@@ -228,7 +228,7 @@ public class Mouse {
 	}
 	
 	private void unpackEvent() {
-				event_dx = current_event.event_x - last_event_raw_y;
+				event_dx = current_event.event_x - last_event_raw_x;
 				event_dy = current_event.event_y - last_event_raw_y;
 				event_x += event_dx;
 				event_y += event_dy;
@@ -283,10 +283,17 @@ public class Mouse {
 	}
 
 	/**
-	 * @return Current events delta z
+	 * @return Current events delta wheel x
 	 */
 	public int getEventDWheelX() {
 		return event_dwheelx;
+	}
+	
+	/**
+	 * @return Current events delta wheel x
+	 */
+	public int getEventDWheelY() {
+		return event_dwheely;
 	}
 
 	/**

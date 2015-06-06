@@ -42,6 +42,20 @@ public class Texture
 
 		buffer.flip();
 
+		create(buffer);
+
+		input.close();
+	}
+	
+	public Texture(ByteBuffer input, int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+		create(input);
+		
+	}
+	
+	private void create(ByteBuffer imageBuffer) {
 		glEnable(target);
 
 		glBindTexture(target, 0);
@@ -61,8 +75,6 @@ public class Texture
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 
 		glTexImage2D(target, 0, GL_RGBA, getWidth(), getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-		input.close();
 	}
 
 	public void bind()

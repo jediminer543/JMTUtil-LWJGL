@@ -28,11 +28,24 @@ public class Display implements Tickable
 {
 	private long windowID;
 	
-	//@SuppressWarnings("unused")
 	Keyboard keyboard;
-	//@SuppressWarnings("unused")
 	Mouse mouse;
 	
+	/**
+	 * @return the keyboard
+	 */
+	public Keyboard getKeyboard() {
+	
+		return keyboard;
+	}
+	/**
+	 * @return the mouse
+	 */
+	public Mouse getMouse() {
+	
+		return mouse;
+	}
+
 	private boolean mouseGrabbed = false;
 	
 	DisplayCallbacks callbacks = new DisplayCallbacks();
@@ -72,7 +85,6 @@ public class Display implements Tickable
 		this.height = height;
 		this.monitor = monitor;
 		this.share = share;
-		DisplayHandler.registerDisplay(this);
 		InputBus.register(this);
 	}
 	
@@ -91,6 +103,7 @@ public class Display implements Tickable
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         
 		windowID = glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
+		DisplayHandler.registerDisplay(this);
 		
 		Callbacks.glfwSetCallback(windowID, cpcallback);
 		Callbacks.glfwSetCallback(windowID, keycallback);
@@ -120,11 +133,25 @@ public class Display implements Tickable
 		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 	}
 	
+	@Override
+	public void tick() {
+		GLFW.glfwPollEvents();
+		GLFW.glfwSwapBuffers(DisplayHandler.getActive());
+	}
+	
+	public void update() {
+		this.tick();
+	}
+	
 	public boolean shouldClose() {
 		if (glfwWindowShouldClose(getWindowID()) == GL11.GL_FALSE)
 			return false;
 		else
 			return true;
+	}
+	
+	public boolean isCloseRequested() {
+		return shouldClose();
 	}
 	
 	public double getCenterX() {
@@ -165,7 +192,7 @@ public class Display implements Tickable
 				glfwSetCursorPos(windowID, getCenterX(), getCenterY());
 			}
 			else {
-				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos, ypos));
+				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos, height-ypos));
 			}
 		}
 	}
@@ -249,11 +276,7 @@ public class Display implements Tickable
 		
 	}
 	}
-	
-	@Override
-	public void tick() {
-		// TODO Auto-generated method stub
-	}
+
 	
 	
 }

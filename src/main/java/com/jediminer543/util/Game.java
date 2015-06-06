@@ -54,6 +54,7 @@ public class Game
 		DisplayHandler.init();
 		mainDisplayID = DisplayHandler.makeDisplay(title, width, height, 0L, 0L);
 		DisplayHandler.setActive(mainDisplayID);
+		DisplayHandler.setMouseGrabbed(mainDisplayID, true);
 	}
 	
 	public static void initGl() {
@@ -98,7 +99,6 @@ public class Game
 		GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 		sphere.pos.add(new Vector3f(-10f,0f,-10f));
 		model.rot.add(new Vector3f(-45f,0f,-45f));
-		GLFW.glfwSetInputMode(mainDisplayID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		while (GLFW.glfwWindowShouldClose(DisplayHandler.getActive()) == GL11.GL_FALSE) {
 			GLFW.glfwPollEvents();
 			GLFW.glfwSwapBuffers(DisplayHandler.getActive());

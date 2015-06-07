@@ -1,6 +1,5 @@
 JMTUtil-LWJGL
 ==========
-Travis Status;
 [![Build Status](https://travis-ci.org/jediminer543/JMTUtil-LWJGL.svg)](https://travis-ci.org/jediminer543/JMTUtil-LWJGL)
 
 ##What Is It

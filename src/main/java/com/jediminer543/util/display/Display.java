@@ -48,6 +48,7 @@ public class Display implements Tickable
 
 	private boolean mouseGrabbed = false;
 	
+
 	DisplayCallbacks callbacks = new DisplayCallbacks();
 	private DisplayCursorPosCallback cpcallback = callbacks.new DisplayCursorPosCallback();
 	private DisplayKeyCallback keycallback = callbacks.new DisplayKeyCallback();
@@ -60,14 +61,23 @@ public class Display implements Tickable
 	public int height;
 	public int width;
 	
+	/**
+	 * Determines whether to register to the DisplayHandler
+	 * 
+	 * @see com.jediminer543.util.DisplayHandlerTest
+	 */
+	public boolean useHandler = true;
+	
 	public String title;
 	
 	long monitor, share = 0L;
 	
+	/**
+	 * A Config used in testing to set 
+	 */
 	public boolean useCloseKey = true;
 	public int closeKey = Keyboard.KEY_ESCAPE;
 	
-	 
 	
 	@Input
 	public void onInput(InputEvent ie) {
@@ -88,6 +98,15 @@ public class Display implements Tickable
 		InputBus.register(this);
 	}
 	
+	public Display(String title, DisplayMode dm) {
+		this.title = title;
+		this.width = dm.width;
+		this.height = dm.height;
+		this.monitor = dm.monitor;
+		this.share = dm.share;
+		InputBus.register(this);
+	}
+	
 	public void makeActive() {
 		DisplayHandler.activeDisplayPos = windowID;
 		glfwMakeContextCurrent(windowID);
@@ -95,6 +114,10 @@ public class Display implements Tickable
 	}
 	
 	public void init() {
+		init(null);
+	}
+	
+	public void init(DisplayMode mode) {
 		if (GLFW.glfwInit() != GL11.GL_TRUE) {
 			
 		}
@@ -131,6 +154,14 @@ public class Display implements Tickable
 		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		else
 		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+	}
+	
+	/**
+	 * @return Gets the mouse gra
+	 */
+	public boolean isMouseGrabbed() {
+	
+		return mouseGrabbed;
 	}
 	
 	@Override

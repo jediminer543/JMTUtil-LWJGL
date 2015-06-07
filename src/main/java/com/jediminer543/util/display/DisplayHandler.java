@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 
 import com.jediminer543.util.input.Keyboard;
@@ -18,6 +19,8 @@ public class DisplayHandler {
 	private static boolean initialised = false;
 	
 	public static void init() {
+		
+		GLFW.glfwSetErrorCallback(Callbacks.errorCallbackPrint(System.err));
 		
 		if ( GLFW.glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");

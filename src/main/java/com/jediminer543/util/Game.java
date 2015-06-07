@@ -2,6 +2,7 @@ package com.jediminer543.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -15,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
 
 import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.gl.Project;
+import com.jediminer543.util.natives.NativeUtil;
 import com.jediminer543.util.render.camera.DebugCamera;
 import com.jediminer543.util.render.model.Model;
 import com.jediminer543.util.render.model.ObjectLoader;
@@ -33,10 +35,11 @@ public class Game
 	public static String title = "Test Window";
 		
 	
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException, URISyntaxException
 	{
-		model = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\cube.obj"));
-		sphere = ObjectLoader.loadModel(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\sphere2.obj"));
+		NativeUtil.addDefaultNativePath();
+		model = ObjectLoader.loadModel(new File(Game.class.getResource("/cube.obj").toURI()));
+		sphere = ObjectLoader.loadModel(new File(Game.class.getResource("/Sphere2.obj").toURI()));
 		init();
 		mainLoop();
 	}

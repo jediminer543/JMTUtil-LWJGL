@@ -32,39 +32,69 @@ public class Display implements Tickable
 	Mouse mouse;
 	
 	/**
-	 * @return the keyboard
+	 * @return the keyboard of this display
+	 * @since 0.1.5
 	 */
 	public Keyboard getKeyboard() {
 	
 		return keyboard;
 	}
 	/**
-	 * @return the mouse
+	 * @return the mouse of this display
+	 * @since 0.1.5
 	 */
 	public Mouse getMouse() {
 	
 		return mouse;
 	}
 
+	/**
+	 * The mouse grab state
+	 */
 	private boolean mouseGrabbed = false;
 	
-
+	/**
+	 * The callback class
+	 */
 	DisplayCallbacks callbacks = new DisplayCallbacks();
+	/**
+	 * Mouse Move callback
+	 */
 	private DisplayCursorPosCallback cpcallback = callbacks.new DisplayCursorPosCallback();
+	/**
+	 * Key callback
+	 */
 	private DisplayKeyCallback keycallback = callbacks.new DisplayKeyCallback();
+	/**
+	 * Mouse Button Callback
+	 */
 	private DisplayMouseButtonCallback mbcallback = callbacks.new DisplayMouseButtonCallback();
 	
+	/**
+	 * Gets the native GLFW id
+	 * @return The native glfw ID
+	 */
 	public long getWindowID() {
 		return windowID;
 	}
 
+	/**
+	 * Width of the display
+	 * @since 0.1.5
+	 */
 	public int height;
+	/**
+	 * Height of the display
+	 * @since 0.1.5
+	 */
 	public int width;
 	
 	/**
 	 * Determines whether to register to the DisplayHandler
 	 * 
-	 * @see com.jediminer543.util.DisplayHandlerTest
+	 * @see com.jediminer543.util.DisplayHandler
+	 * 
+	 * @since 0.1.5
 	 */
 	public boolean useHandler = true;
 	
@@ -78,7 +108,11 @@ public class Display implements Tickable
 	public boolean useCloseKey = true;
 	public int closeKey = Keyboard.KEY_ESCAPE;
 	
-	
+	/**
+	 * Called by event bus; closes widow if configured to use close key
+	 * Designed to be used by debugging
+	 * @param ie
+	 */
 	@Input
 	public void onInput(InputEvent ie) {
 		if (ie instanceof KeyEvent) {
@@ -89,6 +123,15 @@ public class Display implements Tickable
 		}
 	}
 	
+	/**
+	 * Creates a display with a specified title and information passed
+	 * @param title Title of display
+	 * @param width Width of display
+	 * @param height Height of display
+	 * @param monitor Monitor to fullscreen on
+	 * @param share Display to share context with
+	 * @since 0.1.5
+	 */
 	public Display(String title, int width, int height, long monitor, long share) {
 		this.title = title;
 		this.width = width;
@@ -98,6 +141,13 @@ public class Display implements Tickable
 		InputBus.register(this);
 	}
 	
+	/**
+	 * Creates a display with a specified title and info from
+	 *  a display mode
+	 * @param title Title for display
+	 * @param dm Display Mode to set 
+	 * @since 0.1.5
+	 */
 	public Display(String title, DisplayMode dm) {
 		this.title = title;
 		this.width = dm.width;
@@ -107,16 +157,31 @@ public class Display implements Tickable
 		InputBus.register(this);
 	}
 	
+	/**
+	 * Sets as active with display handler
+	 * Then creates the OpenGL context for the display
+	 * @since 0.1.5
+	 */
 	public void makeActive() {
 		DisplayHandler.activeDisplayPos = windowID;
 		glfwMakeContextCurrent(windowID);
 		GLContext.createFromCurrent();
 	}
 	
+	/**
+	 * Initialises GLFW window
+	 * @since 0.1.5
+	 */
 	public void init() {
 		init(null);
 	}
 	
+	/**
+	 * Initialises the GLFW window
+	 * Subject to change with display mode?
+	 * @param mode Display Mode (NYI)
+	 * @since 0.1.5
+	 */
 	public void init(DisplayMode mode) {
 		if (GLFW.glfwInit() != GL11.GL_TRUE) {
 			
@@ -148,6 +213,13 @@ public class Display implements Tickable
 		mouse = new Mouse(windowID);
 	}
 	
+	/**
+	 * Sets the mouse grabbed state
+	 * 
+	 * @param grab The state to set the mouse to (grabbed or not)
+	 * @see org.lwjgl.glfw.GLFW.glfwSetInputMode
+	 * 
+	 */
 	public void setMouseGrabbed(boolean grab) {
 		this.mouseGrabbed = grab;
 		if (grab)
@@ -157,23 +229,55 @@ public class Display implements Tickable
 	}
 	
 	/**
-	 * @return Gets the mouse gra
+	 * @return The mouses grabbed state
+	 * @since 0.1.5
 	 */
 	public boolean isMouseGrabbed() {
 	
 		return mouseGrabbed;
 	}
 	
+	/**
+	 * Set the display configuration to the specified gamma, brightness and contrast.
+	 * The configuration changes will be reset when destroy() is called.
+	 *
+	 * @param gamma      The gamma value
+	 * @param brightness The brightness value between -1.0 and 1.0, inclusive
+	 * @param contrast   The contrast, larger than 0.0.
+	 * 
+	 * NYI
+	 */
+	public void setDisplayConfiguration(float gamma, float brightness, float contrast) {
+		//TODO
+	}
+	
+	/**
+	 * Calls GLFW per frame operations
+	 * Swaps buffers and polls events
+	 * @see org.lwjgl.glfw.GLFW.glfwPollEvents
+	 * @see org.lwjgl.glfw.GLFW.glfwSwapBuffers
+	 * @since 0.1.5
+	 */
 	@Override
 	public void tick() {
 		GLFW.glfwPollEvents();
 		GLFW.glfwSwapBuffers(DisplayHandler.getActive());
 	}
 	
+	/**
+	 * Update the window 
+	 * @see com.jediminer543.util.display.Display.tick
+	 * @since 0.1.5
+	 */
 	public void update() {
 		this.tick();
 	}
 	
+	/**
+	 * Checks if the display should close
+	 * @return Whether the display should close
+	 * @since 0.1.5
+	 */
 	public boolean shouldClose() {
 		if (glfwWindowShouldClose(getWindowID()) == GL11.GL_FALSE)
 			return false;
@@ -181,16 +285,38 @@ public class Display implements Tickable
 			return true;
 	}
 	
+	/**
+	 * LWJGL 2 compatibility method.
+	 * @return whether the display should close
+	 * @see ShouldClose
+	 * @since 0.1.5
+	 */
 	public boolean isCloseRequested() {
 		return shouldClose();
 	}
 	
+	/**
+	 * @return the centre of the display on the x axis
+	 * @since 0.1.5
+	 */
 	public double getCenterX() {
 		return width / 2;
 	}
 	
+	/**
+	 * @return the centre of the display on the x axis
+	 * @since 0.1.5
+	 */
 	public double getCenterY() {
 		return height / 2;
+	}
+	
+	/**
+	 * Destroy the Display. 
+	 * @since 0.1.5
+	 */
+	public void destroy() {
+		glfwDestroyWindow(windowID);
 	}
 	
 	class DisplayCallbacks {
@@ -308,6 +434,4 @@ public class Display implements Tickable
 	}
 	}
 
-	
-	
 }

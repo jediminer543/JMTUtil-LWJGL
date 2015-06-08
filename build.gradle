@@ -19,7 +19,7 @@ mainClassName = "RunMain"
 applicationDefaultJvmArgs = ["-Djava.library.path=lib/natives"]
 
 sourceCompatibility = 1.7
-version = '0.1.4'
+version = '0.1.5'
 jar {
     manifest {
         attributes 'Implementation-Title': 'JMTUtil-LWJGL', 'Implementation-Version': version
@@ -61,4 +61,11 @@ uploadArchives {
            dirs 'repos'
        }
     }
+}
+
+distZip {
+	into(project.name + "-" + version) {
+		from '.'
+		include 'lib/natives/*'
+	}
 }

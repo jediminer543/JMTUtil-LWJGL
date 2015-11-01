@@ -1,4 +1,4 @@
-buildscript {
+/*buildscript {
     repositories {
         mavenCentral()
     }
@@ -7,17 +7,17 @@ buildscript {
     }
 }
 
-apply plugin: 'gradle-one-jar'
+apply plugin: 'gradle-one-jar'*/
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin:'application'
+//apply plugin:'application'
 
-mainClassName = "RunMain"
-applicationDefaultJvmArgs = ["-Djava.library.path=lib/natives"]
+//mainClassName = "RunMain"
+//applicationDefaultJvmArgs = ["-Djava.library.path=lib/natives"]
 
 sourceCompatibility = 1.7
-version = '0.1.2'
+version = '0.2.3'
 jar {
     manifest {
         attributes 'Implementation-Title': 'JMTUtil-LWJGL', 'Implementation-Version': version
@@ -37,7 +37,8 @@ test {
     systemProperties 'property': 'value'
 }
 
-jar {
+/*
+task depJar(type: compile) {
 	from {
 		configurations.compile.collect {
 			it.isDirectory() ? it : zipTree(it)
@@ -52,6 +53,7 @@ task fatJar(type: OneJar) {
 	mainClass = 'com.jediminer543.util.Game'
     binLib = fileTree(dir: 'libs/natives', include: '*.*')
 }
+*/
 
 uploadArchives {
     repositories {

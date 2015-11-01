@@ -1,13 +1,13 @@
 package com.jediminer543.util.render.model;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 /**
  * Created by Jediminer543 on 13/08/2014.

@@ -2,9 +2,10 @@ package com.jediminer543.util.render.model;
 
 import com.jediminer543.util.render.Renderable;
 import com.jediminer543.util.render.Texture;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 
 import java.io.File;
 import java.io.IOException;

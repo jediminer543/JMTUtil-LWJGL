@@ -1,7 +1,7 @@
 package com.jediminer543.util.render.model;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 
 /**

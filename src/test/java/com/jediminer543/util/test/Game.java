@@ -1,8 +1,10 @@
 package com.jediminer543.util.test;
 
 import java.io.IOException;
+
 import static org.lwjgl.opengl.GL11.*;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.glfw.GLFW;
@@ -14,8 +16,6 @@ import com.jediminer543.util.gl.Project;
 import com.jediminer543.util.render.camera.DebugCamera;
 import com.jediminer543.util.render.model.Model;
 import com.jediminer543.util.render.model.ObjectLoader;
-
-import javax.vecmath.Vector3f;
 
 public class Game 
 {

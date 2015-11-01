@@ -1,5 +1,6 @@
 package com.jediminer543.util.render.camera;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import com.jediminer543.util.display.DisplayHandler;
@@ -9,7 +10,6 @@ import com.jediminer543.util.event.bus.InputBus;
 import com.jediminer543.util.input.Keyboard;
 import com.jediminer543.util.input.Mouse;
 
-import javax.vecmath.Vector3f;
 
 /**
  * Created by Jediminer543 on 23/08/2014.

@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFW;
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.KeyEvent;
 import com.jediminer543.util.event.annotation.Input;
+import com.jediminer543.util.event.bus.InputBus;
 
 /**
  * 
@@ -27,8 +28,9 @@ public class Keyboard
 				KeyEvent ke = (KeyEvent) ie;
 				Event event = new Event();
 				event.key = ke.getKey();
-				event.repeat = ke.getAction() == GLFW.GLFW_REPEAT;
-				event.state = ke.getAction() == GLFW.GLFW_PRESS || ke.getAction() == GLFW.GLFW_REPEAT;
+				event.repeat = (ke.getAction() == GLFW.GLFW_REPEAT);
+				event.state = (ke.getAction() == GLFW.GLFW_PRESS) || (ke.getAction() == GLFW.GLFW_REPEAT);
+				events.push(event);
 			}
 		}
 	}
@@ -39,6 +41,7 @@ public class Keyboard
 	 */
 	public Keyboard(long windowID) {
 		this.windowID = windowID;
+		InputBus.register(this);
 	}
 	
 	private long windowID;
@@ -51,11 +54,11 @@ public class Keyboard
 		this.windowID = windowID;
 	}
 	
-//TODO add keyboardMode
-//	public static enum KeyboardMode {
-//		DirectRead,
-//		EventRead;
-//	}
+	/**
+	 * The special character meaning that no
+	 * character was translated for the event.
+	 */
+	public static final int CHAR_NONE          = '\0';
 	
 	/**
 	 * The special keycode meaning that only the
@@ -118,7 +121,7 @@ public class Keyboard
 	public static final int KEY_SLASH           = GLFW.GLFW_KEY_SLASH; /* / on main keyboard */
 	public static final int KEY_RSHIFT          = GLFW.GLFW_KEY_RIGHT_SHIFT;
 	public static final int KEY_MULTIPLY        = GLFW.GLFW_KEY_KP_MULTIPLY; /* * on numeric keypad */
-	public static final int KEY_LMENU           = GLFW.GLFW_KEY_MENU; /* left Alt */
+	public static final int KEY_LMENU           = GLFW.GLFW_KEY_LEFT_ALT; /* left Alt */
 	public static final int KEY_SPACE           = GLFW.GLFW_KEY_SPACE;
 	public static final int KEY_CAPITAL         = GLFW.GLFW_KEY_CAPS_LOCK;
 	public static final int KEY_F1              = GLFW.GLFW_KEY_F1;
@@ -156,16 +159,14 @@ public class Keyboard
 	public static final int KEY_F18             = GLFW.GLFW_KEY_F18;
 	public static final int KEY_F19             = GLFW.GLFW_KEY_F19; /* Extended Function keys - (Mac) */
 	public static final int KEY_NUMPADEQUALS    = GLFW.GLFW_KEY_KP_EQUAL; /* = on numeric keypad (NEC PC98) */
-	public static final int KEY_NUMPADENTER     = GLFW.GLFW_KEY_KP_EQUAL; /* Enter on numeric keypad */
-	public static final int KEY_RCONTROL        = GLFW.GLFW_KEY_F19;
-	public static final int KEY_SECTION         = GLFW.GLFW_KEY_F19; /* Section symbol (Mac) */
-	public static final int KEY_NUMPADCOMMA     = GLFW.GLFW_KEY_F19; /* , on numeric keypad (NEC PC98) */
-	public static final int KEY_DIVIDE          = GLFW.GLFW_KEY_F19; /* / on numeric keypad */
-	public static final int KEY_SYSRQ           = GLFW.GLFW_KEY_F19;
-	public static final int KEY_RMENU           = GLFW.GLFW_KEY_F19; /* right Alt */
-	public static final int KEY_FUNCTION        = GLFW.GLFW_KEY_F19; /* Function (Mac) */
-	public static final int KEY_PAUSE           = GLFW.GLFW_KEY_F19; /* Pause */
-	public static final int KEY_HOME            = GLFW.GLFW_KEY_F19; /* Home on arrow keypad */
+	public static final int KEY_NUMPADENTER     = GLFW.GLFW_KEY_KP_ENTER; /* Enter on numeric keypad */
+	public static final int KEY_RCONTROL        = GLFW.GLFW_KEY_RIGHT_CONTROL;
+	public static final int KEY_NUMPADCOMMA     = GLFW.GLFW_KEY_COMMA; /* , on numeric keypad (NEC PC98) */
+	public static final int KEY_DIVIDE          = GLFW.GLFW_KEY_SLASH; /* / on numeric keypad */
+	public static final int KEY_SYSRQ           = GLFW.GLFW_KEY_PRINT_SCREEN;
+	public static final int KEY_RMENU           = GLFW.GLFW_KEY_RIGHT_ALT; /* right Alt */
+	public static final int KEY_PAUSE           = GLFW.GLFW_KEY_PAUSE; /* Pause */
+	public static final int KEY_HOME            = GLFW.GLFW_KEY_HOME; /* Home on arrow keypad */
 	public static final int KEY_UP              = GLFW.GLFW_KEY_UP; /* UpArrow on arrow keypad */
 	public static final int KEY_PRIOR           = GLFW.GLFW_KEY_PAGE_UP; /* PgUp on arrow keypad */
 	public static final int KEY_LEFT            = GLFW.GLFW_KEY_LEFT; /* LeftArrow on arrow keypad */
@@ -223,7 +224,7 @@ public class Keyboard
 	
 	public Stack<Event> events = new Stack<Event>();
 	
-	public Event current_event;
+	public Event current_event = new Event();
 
 	
 	/**
@@ -273,7 +274,7 @@ public class Keyboard
 	 * @return last event or null if no new events
 	 */
 	public boolean next() {
-		return !(this.nextEvent() == null);
+		return this.nextEvent() != null;
 	}
 	
 	/**
@@ -321,10 +322,13 @@ public class Keyboard
 	 * @return The character from the current event
 	 */
 	public char getEventCharacter() {
+		if (this.current_event.key <= 255) {
 		return (char) this.current_event.key;
+		} else {
+		return CHAR_NONE;
+		}
 	}
 	
-	@SuppressWarnings("unused")
 	private static final class Event {
 		
 		/** The current keyboard event key being examined
@@ -340,12 +344,17 @@ public class Keyboard
 		
 		/** Is the current event a repeated event? */
 		private boolean repeat;
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
 		
-		private void reset() {
-			key = 0;
-			state = false;
-			repeat = false;
+			return "Event [key=" + key + ", state=" + state + ", nanos=" + nanos + ", repeat="
+					+ repeat + "]";
 		}
+		
 	}
 	
 	

@@ -35,6 +35,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_BGR;
@@ -244,7 +245,7 @@ public class Project {
 	 */
 	protected static int glGetIntegerv(int what) {
 		scratch.rewind();
-		glGetInteger(what, scratch);
+		GL11.glGetInteger(what, scratch);
 		return scratch.get();
 	}
 	
@@ -414,7 +415,7 @@ public class Project {
 		matrix.put(3 * 4 + 2, -2 * zNear * zFar / deltaZ);
 		matrix.put(3 * 4 + 3, 0);
 
-		glMultMatrix(matrix);
+		GL11.glMultMatrix(matrix);
 	}
 
 	/**

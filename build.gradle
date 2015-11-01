@@ -63,3 +63,17 @@ uploadArchives {
        }
     }
 }
+
+distZip {
+	into(project.name + "-" + version) {
+		from '.'
+		include 'lib/natives/*'
+	}
+}
+
+distTar {
+	into(project.name + "-" + version) {
+		from '.'
+		include 'lib/natives/*'
+	}
+}

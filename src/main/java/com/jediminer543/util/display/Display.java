@@ -7,24 +7,13 @@ import static org.lwjgl.glfw.GLFW.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
-import org.lwjgl.glfw.GLFWCharCallback;
-import org.lwjgl.glfw.GLFWCharModsCallback;
-import org.lwjgl.glfw.GLFWCursorEnterCallback;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWDropCallback;
-import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
-import org.lwjgl.glfw.GLFWWindowCloseCallback;
-import org.lwjgl.glfw.GLFWWindowFocusCallback;
-import org.lwjgl.glfw.GLFWWindowIconifyCallback;
-import org.lwjgl.glfw.GLFWWindowPosCallback;
-import org.lwjgl.glfw.GLFWWindowRefreshCallback;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.glfw.GLFWvidmode;
-import org.lwjgl.glfw.Callbacks;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
+import org.lwjgl.glfw.*;
 
+import com.jediminer543.util.display.Display.DisplayCallbacks.DisplayCursorPosCallback;
+import com.jediminer543.util.display.Display.DisplayCallbacks.DisplayKeyCallback;
+import com.jediminer543.util.display.Display.DisplayCallbacks.DisplayMouseButtonCallback;
 import com.jediminer543.util.event.InputEvent;
 import com.jediminer543.util.event.KeyEvent;
 import com.jediminer543.util.event.MouseButtonEvent;
@@ -35,68 +24,116 @@ import com.jediminer543.util.handlers.time.Tickable;
 import com.jediminer543.util.input.Keyboard;
 import com.jediminer543.util.input.Mouse;
 
-public class Display implements Tickable {
+public class Display implements Tickable
+{
 	private long windowID;
+	
+	Keyboard keyboard;
+	Mouse mouse;
+	
+	/**
+	 * @return the keyboard of this display
+	 * @since 0.1.5
+	 */
+	public Keyboard getKeyboard() {
+	
+		return keyboard;
+	}
+	/**
+	 * @return the mouse of this display
+	 * @since 0.1.5
+	 */
+	public Mouse getMouse() {
+	
+		return mouse;
+	}
 
-	@SuppressWarnings("unused")
-	private Keyboard keyboard;
-	@SuppressWarnings("unused")
-	private Mouse mouse;
-
-	private boolean mouseGrabbed = true;
-
-	//private DisplayCharCallback charCallback = new DisplayCharCallback();
-	//private DisplayCharModsCallback charModsCallback = new DisplayCharModsCallback();
-	//private DisplayCursorEnterCallback cursorEnterCallback = new DisplayCursorEnterCallback();
-	private DisplayCursorPosCallback cursorPosCallback = new DisplayCursorPosCallback();
-	//private DisplayDropCallback dropCallback = new DisplayDropCallback();
-	//private DisplayFramebufferSizeCallback framebufferSizeCallback = new DisplayFramebufferSizeCallback();
-	private DisplayKeyCallback keyCallback = new DisplayKeyCallback();
-	private DisplayMouseButtonCallback mouseButtonCallback = new DisplayMouseButtonCallback();
-	//private DisplayScrollCallback scrollCallback = new DisplayScrollCallback();
-	//private DisplayWindowCloseCallback windowCloseCallback = new DisplayWindowCloseCallback();
-	//private DisplayWindowFocusCallback windowFocusCallback = new DisplayWindowFocusCallback();
-	//private DisplayWindowIconifyCallback windowIconifyCallback = new DisplayWindowIconifyCallback();
-	//private DisplayWindowPosCallback windowPosCallback = new DisplayWindowPosCallback();
-	//private DisplayWindowRefreshCallback windowRefreshCallback = new DisplayWindowRefreshCallback();
-	private DisplayWindowSizeCallback windowSizeCallback = new DisplayWindowSizeCallback();
-
+	/**
+	 * The mouse grab state
+	 */
+	private boolean mouseGrabbed = false;
+	
+	/**
+	 * The callback class
+	 */
+	DisplayCallbacks callbacks = new DisplayCallbacks();
+	/**
+	 * Mouse Move callback
+	 */
+	private DisplayCursorPosCallback cpcallback = callbacks.new DisplayCursorPosCallback();
+	/**
+	 * Key callback
+	 */
+	private DisplayKeyCallback keycallback = callbacks.new DisplayKeyCallback();
+	/**
+	 * Mouse Button Callback
+	 */
+	private DisplayMouseButtonCallback mbcallback = callbacks.new DisplayMouseButtonCallback();
+	
+	/**
+	 * Gets the native GLFW id
+	 * @return The native glfw ID
+	 */
 	public long getWindowID() {
 		return windowID;
 	}
 
+	/**
+	 * Width of the display
+	 * @since 0.1.5
+	 */
 	public int height;
+	/**
+	 * Height of the display
+	 * @since 0.1.5
+	 */
 	public int width;
-
+	
+	/**
+	 * Determines whether to register to the DisplayHandler
+	 * 
+	 * @see com.jediminer543.util.DisplayHandler
+	 * 
+	 * @since 0.1.5
+	 */
+	public boolean useHandler = true;
+	
 	public String title;
-
-	public long monitor, share = 0L;
-
+	
+	long monitor, share = 0L;
+	
+	/**
+	 * A Config used in testing to set 
+	 */
+	public boolean useCloseKey = true;
+	public int closeKey = Keyboard.KEY_ESCAPE;
+	
+	private int swapInterval = 0;
+	
+	/**
+	 * Called by event bus; closes widow if configured to use close key
+	 * Designed to be used by debugging
+	 * @param ie
+	 */
 	@Input
 	public void onInput(InputEvent ie) {
 		if (ie instanceof KeyEvent) {
 			KeyEvent ke = (KeyEvent) ie;
-			if (ke.getWindowID() == this.getWindowID()
-					&& ke.getKey() == Keyboard.KEY_ESCAPE) {
+			if (ke.getWindowID() == this.getWindowID() && ke.getKey() == closeKey && useCloseKey) {
 				glfwSetWindowShouldClose(windowID, GL_TRUE);
 			}
 		}
 	}
-
-	public Display(String title) {
-		this(title, 800, 600);
-	}
-
-	@SuppressWarnings("null")
-	public Display(String title, int width, int height) {
-		this(title, 800, 600, (Long) null);
-	}
-
-	@SuppressWarnings("null")
-	public Display(String title, int width, int height, long monitor) {
-		this(title, 800, 600, monitor, (Long) null);
-	}
-
+	
+	/**
+	 * Creates a display with a specified title and information passed
+	 * @param title Title of display
+	 * @param width Width of display
+	 * @param height Height of display
+	 * @param monitor Monitor to fullscreen on
+	 * @param share Display to share context with
+	 * @since 0.1.5
+	 */
 	public Display(String title, int width, int height, long monitor, long share) {
 		this.title = title;
 		this.width = width;
@@ -105,277 +142,310 @@ public class Display implements Tickable {
 		this.share = share;
 		InputBus.register(this);
 	}
-
-	public void init() {
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
-		windowID = glfwCreateWindow(width, height, CharBuffer.wrap(title),
-				monitor, share);
-
-		// Callbacks.(windowID, callback);
-		registerCallbacks();
-
-		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(windowID, (GLFWvidmode.width(vidmode) - width) / 2,
-				(GLFWvidmode.height(vidmode) - height) / 2);
-
+	
+	/**
+	 * Creates a display with a specified title and info from
+	 *  a display mode
+	 * @param title Title for display
+	 * @param dm Display Mode to set 
+	 * @since 0.1.5
+	 */
+	public Display(String title, DisplayMode dm) {
+		this.title = title;
+		this.width = dm.width;
+		this.height = dm.height;
+		this.monitor = dm.monitor;
+		this.share = dm.share;
+		InputBus.register(this);
+	}
+	
+	/**
+	 * Sets as active with display handler
+	 * Then creates the OpenGL context for the display
+	 * @since 0.1.5
+	 */
+	public void makeActive() {
+		DisplayHandler.activeDisplayPos = windowID;
 		glfwMakeContextCurrent(windowID);
-
+		GLContext.createFromCurrent();
+	}
+	
+	/**
+	 * Initialises GLFW window
+	 * @since 0.1.5
+	 */
+	public void init() {
+		init(null);
+	}
+	
+	/**
+	 * Initialises the GLFW window
+	 * Subject to change with display mode?
+	 * @param mode Display Mode (NYI)
+	 * @since 0.1.5
+	 */
+	public void init(DisplayMode mode) {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			
+		}
+		glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+        
+		windowID = glfwCreateWindow(width, height, CharBuffer.wrap(title), monitor, share);
+		DisplayHandler.registerDisplay(this);
+		
+		Callbacks.glfwSetCallback(windowID, cpcallback);
+		Callbacks.glfwSetCallback(windowID, keycallback);
+		Callbacks.glfwSetCallback(windowID, mbcallback);
+		//TODO ALL THE CALLBACKS
+		
+		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetWindowPos(
+            windowID,
+            (GLFWvidmode.width(vidmode) - width) / 2,
+            (GLFWvidmode.height(vidmode) - height) / 2
+        );
+        
+        glfwMakeContextCurrent(windowID);
+        
 		glfwSwapInterval(1);
-		glfwShowWindow(windowID);
+        glfwShowWindow(windowID);
 		keyboard = new Keyboard(windowID);
 		mouse = new Mouse(windowID);
 	}
 	
-	public void registerCallbacks() {
-		Callbacks.glfwSetCallback(windowID, cursorPosCallback);
-		Callbacks.glfwSetCallback(windowID, keyCallback);
-		Callbacks.glfwSetCallback(windowID, mouseButtonCallback);
-		Callbacks.glfwSetCallback(windowID, windowSizeCallback);
-	}
-
-	public void tick() {
-		
-	}
-
-	/*
-	 * public class DisplayCallback extends Callbacks {
+	/**
+	 * Sets the mouse grabbed state
 	 * 
+	 * @param grab The state to set the mouse to (grabbed or not)
+	 * @see org.lwjgl.glfw.GLFW.glfwSetInputMode
 	 * 
-	 * 
-	 * @Override public void charMods(long arg0, int arg1, int arg2) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void character(long arg0, int arg1) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void cursorEnter(long arg0, int arg1) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void cursorPos(long window, double xpos, double ypos) {
-	 * 
-	 * 
-	 * }
-	 * 
-	 * @Override public void drop(long arg0, int arg1, long arg2) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void framebufferSize(long arg0, int arg1, int arg2) { //
-	 * TODO Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void key(long window, int key, int scancode, int action,
-	 * int mods) { InputBus.invoke(new KeyEvent(window, key, scancode, action,
-	 * mods));
-	 * 
-	 * 
-	 * }
-	 * 
-	 * @Override public void mouseButton(long window, int button, int action,
-	 * int mods) { InputBus.invoke(new MouseButtonEvent(window, button, action,
-	 * mods));
-	 * 
-	 * }
-	 * 
-	 * @Override public void scroll(long window, double wheelx, double wheely) {
-	 * //TODO:mouseEventUpdate(); }
-	 * 
-	 * @Override public void windowClose(long arg0) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void windowFocus(long arg0, int arg1) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void windowIconify(long arg0, int arg1) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void windowPos(long arg0, int arg1, int arg2) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void windowRefresh(long arg0) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void windowSize(long arg0, int arg1, int arg2) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * }
 	 */
-
-
-		/**
-		 * Required for mouse centralisation
-		 */
-		double centerX = width / 2;
-		double centerY = height / 2;
-
-		class DisplayCharCallback extends GLFWCharCallback {
-
-			@Override
-			public void invoke(long window, int codepoint) {
-
-			}
-
-		}
-
-		class DisplayCharModsCallback extends GLFWCharModsCallback {
-
-			@Override
-			public void invoke(long window, int codepoint, int mods) {
-
-			}
-		}
-
-		class DisplayCursorEnterCallback extends GLFWCursorEnterCallback {
-
-			@Override
-			public void invoke(long window, int entered) {
-
-			}
-
-		}
-
-		class DisplayCursorPosCallback extends GLFWCursorPosCallback {
-
-			@Override
-			public void invoke(long window, double xpos, double ypos) {
-
-				if (mouseGrabbed) {
-					InputBus.invoke(new MouseMoveEvent(window, xpos - centerX,
-							ypos - centerY));
-					glfwSetCursorPos(windowID, centerX, centerY);
-				}
-
-			}
-		}
-
-		class DisplayDropCallback extends GLFWDropCallback {
-
-			@Override
-			public void invoke(long window, int count, long names) {
-
-			}
-
-		}
-
-		class DisplayFramebufferSizeCallback extends
-				GLFWFramebufferSizeCallback {
-
-			@Override
-			public void invoke(long window, int width, int height) {
-
-			}
-		}
-
-		class DisplayKeyCallback extends GLFWKeyCallback {
-
-			@Override
-			public void invoke(long window, int key, int scancode, int action,
-					int mods) {
-				InputBus.invoke(new KeyEvent(window, key, scancode, action,
-						mods));
-			}
-		}
-
-		class DisplayMouseButtonCallback extends GLFWMouseButtonCallback {
-
-			@Override
-			public void invoke(long window, int button, int action, int mods) {
-				InputBus.invoke(new MouseButtonEvent(window, button, action, mods));
-
-			}
-		}
-		
-		class DisplayScrollCallback extends GLFWScrollCallback {
-
-			@Override
-			public void invoke(long window, double xoffset, double yoffset) {
-				
-			}
-
-		}
-		
-		class DisplayWindowCloseCallback extends GLFWWindowCloseCallback {
-
-			@Override
-			public void invoke(long window) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		}
-		
-		class DisplayWindowFocusCallback extends GLFWWindowFocusCallback {
-
-			@Override
-			public void invoke(long window, int focused) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		}
-		
-		class DisplayWindowIconifyCallback extends GLFWWindowIconifyCallback {
-
-			@Override
-			public void invoke(long window, int iconified) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		}
-		
-		class DisplayWindowPosCallback extends GLFWWindowPosCallback {
-
-			@Override
-			public void invoke(long window, int xpos, int ypos) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		}
-		
-		class DisplayWindowRefreshCallback extends GLFWWindowRefreshCallback {
-
-			@Override
-			public void invoke(long window) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		}
-		
-		class DisplayWindowSizeCallback extends GLFWWindowSizeCallback {
-
-			@Override
-			public void invoke(long window, int mwidth, int mheight) {
-				width = mwidth;
-				height = mheight;
-			}
-
-		}
-		
+	public void setMouseGrabbed(boolean grab) {
+		this.mouseGrabbed = grab;
+		if (grab)
+		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+		else
+		glfwSetInputMode(getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+	}
 	
+	/**
+	 * @return The mouses grabbed state
+	 * @since 0.1.5
+	 */
+	public boolean isMouseGrabbed() {
+	
+		return mouseGrabbed;
+	}
+	
+	/**
+	 * Set the display configuration to the specified gamma, brightness and contrast.
+	 * The configuration changes will be reset when destroy() is called.
+	 *
+	 * @param gamma      The gamma value
+	 * @param brightness The brightness value between -1.0 and 1.0, inclusive
+	 * @param contrast   The contrast, larger than 0.0.
+	 * 
+	 * NYI
+	 */
+	public void setDisplayConfiguration(float gamma, float brightness, float contrast) {
+		//TODO
+	}
+	
+	/**
+	 * Enable or disable vertical monitor synchronization. This call is a best-attempt at changing
+	 * the vertical refresh synchronization of the monitor, and is not guaranteed to be successful.
+	 *
+	 * @param sync true to synchronize; false to ignore synchronization
+	 * @since 0.1.5
+	 */
+	public void setVSyncEnabled(boolean sync) {
+		swapInterval = (sync ? 1 : 0);
+	}
+	
+	/**
+	 * Calls GLFW per frame operations
+	 * Swaps buffers and polls events
+	 * @see org.lwjgl.glfw.GLFW.glfwPollEvents
+	 * @see org.lwjgl.glfw.GLFW.glfwSwapBuffers
+	 * @since 0.1.5
+	 */
+	@Override
+	public void tick() {
+		GLFW.glfwSwapInterval(swapInterval);
+		GLFW.glfwPollEvents();
+		GLFW.glfwSwapBuffers(DisplayHandler.getActive());
+	}
+	
+	/**
+	 * Update the window 
+	 * @see com.jediminer543.util.display.Display.tick
+	 * @since 0.1.5
+	 */
+	public void update() {
+		this.tick();
+	}
+	
+	/**
+	 * Checks if the display should close
+	 * @return Whether the display should close
+	 * @since 0.1.5
+	 */
+	public boolean shouldClose() {
+		if (glfwWindowShouldClose(getWindowID()) == GL11.GL_FALSE)
+			return false;
+		else
+			return true;
+	}
+	
+	/**
+	 * LWJGL 2 compatibility method.
+	 * @return whether the display should close
+	 * @see ShouldClose
+	 * @since 0.1.5
+	 */
+	public boolean isCloseRequested() {
+		return shouldClose();
+	}
+	
+	/**
+	 * @return the centre of the display on the x axis
+	 * @since 0.1.5
+	 */
+	public double getCenterX() {
+		return width / 2;
+	}
+	
+	/**
+	 * @return the centre of the display on the x axis
+	 * @since 0.1.5
+	 */
+	public double getCenterY() {
+		return height / 2;
+	}
+	
+	/**
+	 * Destroy the Display. 
+	 * @since 0.1.5
+	 */
+	public void destroy() {
+		glfwDestroyWindow(windowID);
+	}
+	
+	class DisplayCallbacks {
+	public class DisplayCharCallback extends GLFWCharCallback {
+		@Override
+		public void invoke(long window, int character) {
+			
+		}
+	}
+	
+	public class DisplayCharModsCallback extends GLFWCharModsCallback {
+		@Override
+		public void invoke(long window, int arg1, int arg2) {
+			
+		}
+	}
+	
+	public class DisplayCursorEnterCallback extends GLFWCursorEnterCallback {
+		@Override
+		public void invoke(long window, int arg1) {
+			//TODO
+		}
+	}
+	
+	public class DisplayCursorPosCallback extends GLFWCursorPosCallback {
+		@Override
+		public void invoke(long window, double xpos, double ypos) {
+			if (mouseGrabbed) {
+				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos - getCenterX(), ypos - getCenterY()));
+				glfwSetCursorPos(windowID, getCenterX(), getCenterY());
+			}
+			else {
+				InputBus.invoke(new MouseMoveEvent(window, mouseGrabbed, xpos, height-ypos));
+			}
+		}
+	}
+	
+	public class DisplayDropCallback extends GLFWDropCallback {
+		@Override
+		public void invoke(long window, int arg1, long arg2) {
+			//TODO
+		}
+	}
+	
+	public class DisplayFramebufferSizeCallback extends GLFWFramebufferSizeCallback {
+		@Override
+		public void invoke(long window, int arg1, int arg2) {
+			//TODO
+		}
+	}
+	
+	public class DisplayKeyCallback extends GLFWKeyCallback {
+		@Override
+		public void invoke(long window, int key, int scancode, int action, int mods) {
+			InputBus.invoke(new KeyEvent(window, key, scancode, action, mods));
+		}
+	}
+	
+	public class DisplayMouseButtonCallback extends GLFWMouseButtonCallback {
+		@Override
+		public void invoke(long window, int button, int action, int mods) {
+			InputBus.invoke(new MouseButtonEvent(window, mouseGrabbed, button, action, mods));
+		}
+	}
+	
+	public class DisplayScrollCallback extends GLFWScrollCallback {
+		@Override
+		public void invoke(long window, double wheelx, double wheely) {
+			//TODO Mouse Event Xscroll/YScroll
+		}
+	}
+
+	public class DisplayWindowCloseCallback extends GLFWWindowCloseCallback {
+		@Override
+		public void invoke(long arg0) {
+			//TODO
+		}
+	}
+	
+	public class DisplayWindowFocusCallback extends GLFWWindowFocusCallback {
+		@Override
+		public void invoke(long arg0, int arg1) {
+			//TODO
+		}
+	}
+
+	public class DisplayWindowIconifyCallback extends GLFWWindowIconifyCallback {
+		@Override
+		public void invoke(long arg0, int arg1) {
+			
+		}
+	}
+	
+	public class DisplayWindowPosCallback extends GLFWWindowPosCallback {
+		@Override
+		public void invoke(long arg0, int arg1, int arg2) {
+			// TODO
+		}
+	}
+	
+	public class DisplayWindowRefreshCallback extends GLFWWindowRefreshCallback {
+		@Override
+		public void invoke(long arg0) {
+			//TODO
+		}
+	}
+	
+	public class DisplayWindowSizeCallback extends GLFWWindowSizeCallback {
+
+		@Override
+		public void invoke(long arg0, int arg1, int arg2) {
+			//TODO
+		}
+		
+	}
+	}
+
 }

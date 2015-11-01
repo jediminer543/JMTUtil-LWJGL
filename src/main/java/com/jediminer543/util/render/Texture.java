@@ -42,6 +42,20 @@ public class Texture
 
 		buffer.flip();
 
+		create(buffer);
+
+		input.close();
+	}
+	
+	public Texture(ByteBuffer input, int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+		create(input);
+		
+	}
+	
+	private void create(ByteBuffer imageBuffer) {
 		glEnable(target);
 
 		glBindTexture(target, 0);
@@ -50,10 +64,10 @@ public class Texture
 
 		bind();
 
-        //glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		//glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-		//glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
@@ -61,14 +75,16 @@ public class Texture
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 
 		glTexImage2D(target, 0, GL_RGBA, getWidth(), getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-		input.close();
 	}
 
 	public void bind()
 	{
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(target, id);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 	}
 
 	public int getWidth() {

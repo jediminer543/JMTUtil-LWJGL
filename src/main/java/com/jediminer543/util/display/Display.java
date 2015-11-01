@@ -108,6 +108,8 @@ public class Display implements Tickable
 	public boolean useCloseKey = true;
 	public int closeKey = Keyboard.KEY_ESCAPE;
 	
+	private int swapInterval = 0;
+	
 	/**
 	 * Called by event bus; closes widow if configured to use close key
 	 * Designed to be used by debugging
@@ -252,6 +254,17 @@ public class Display implements Tickable
 	}
 	
 	/**
+	 * Enable or disable vertical monitor synchronization. This call is a best-attempt at changing
+	 * the vertical refresh synchronization of the monitor, and is not guaranteed to be successful.
+	 *
+	 * @param sync true to synchronize; false to ignore synchronization
+	 * @since 0.1.5
+	 */
+	public void setVSyncEnabled(boolean sync) {
+		swapInterval = (sync ? 1 : 0);
+	}
+	
+	/**
 	 * Calls GLFW per frame operations
 	 * Swaps buffers and polls events
 	 * @see org.lwjgl.glfw.GLFW.glfwPollEvents
@@ -260,6 +273,7 @@ public class Display implements Tickable
 	 */
 	@Override
 	public void tick() {
+		GLFW.glfwSwapInterval(swapInterval);
 		GLFW.glfwPollEvents();
 		GLFW.glfwSwapBuffers(DisplayHandler.getActive());
 	}

@@ -3,14 +3,11 @@ package com.jediminer543.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.FloatBuffer;
-
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.BufferUtils;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.glfw.GLFW;
 
@@ -20,8 +17,6 @@ import com.jediminer543.util.natives.NativeUtil;
 import com.jediminer543.util.render.camera.DebugCamera;
 import com.jediminer543.util.render.model.Model;
 import com.jediminer543.util.render.model.ObjectLoader;
-
-import javax.vecmath.Vector3f;
 
 public class Game 
 {

@@ -1,11 +1,11 @@
 package com.jediminer543.util.render.camera;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import com.jediminer543.util.display.DisplayHandler;
 import com.jediminer543.util.input.Keyboard;
 import com.jediminer543.util.input.Mouse;
-import javax.vecmath.Vector3f;
 
 /**
  * Created by Jediminer543 on 23/08/2014.
@@ -21,13 +21,17 @@ public class DebugCamera extends Camera
 	
 	Vector3f lookVelocity = new Vector3f();
 	
+	/**
+	 * Sensitivity Values for camera
+	 */
+	public double sX = 0.15, sY = 0.1;
 	protected double DX, DY;
 	
 	@Override
 	public void tick()
 	{
-		rot.x += DX * 0.15;
-		rot.y += -DY * 0.1;
+		rot.x += DX * sX;
+		rot.y += -DY * sY;
 		DX = DY = 0;
 		convertLook();
 		detectInput();

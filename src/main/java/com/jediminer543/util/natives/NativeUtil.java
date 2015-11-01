@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 public class NativeUtil
 {
 	public static void setNativePath(String path) {
-		System.setProperty( "java.library.path", "lib/natives" );
+		System.setProperty( "java.library.path", path);
 		 
 		Field fieldSysPath;
 		try {
@@ -30,7 +30,7 @@ public class NativeUtil
 	}
 	
 	public static void addNativePath(String path) {
-		setNativePath(System.getProperty("java.library.path") + File.pathSeparator + path);
+		setNativePath(((System.getProperty("java.library.path") != null) ? System.getProperty("java.library.path") : "") + File.pathSeparator + path);
 	}
 	
 	public static void addDefaultNativePath() {
